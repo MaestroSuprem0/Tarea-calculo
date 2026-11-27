@@ -1,0 +1,634 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cristal que se disuelve</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=DM+Sans:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme:light;
+  --bg:#ffffff; --fg:#141414; --muted:#666a70; --line:#e8e8e6; --soft:#f6f6f4;
+  --accent:#17805a; --accent-soft:#eaf6f0; --tip:#fff4ea;
+  --orange:#e8590c; --grey:#8a8f96; --water:#3b82c4; --water-soft:#e9f2fb;
+  --ok:#17805a; --ok-soft:#eaf6f0; --bad:#c0392b; --bad-soft:#fbefed;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:'DM Sans',system-ui,sans-serif;font-size:16px;line-height:1.6;padding-inline:16px;padding-block:28px 60px}
+.wrap{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+h1,h2{font-family:'Fraunces',Georgia,serif;text-wrap:balance;line-height:1.15;margin:0;font-weight:500}
+h1{font-size:clamp(1.9rem,6vw,2.7rem);letter-spacing:-.01em}
+h2{font-size:1.4rem}
+h3{margin:0;font-size:1rem}
+p{margin:0}
+.kicker{font-size:.76rem;letter-spacing:.16em;text-transform:uppercase;color:var(--orange);font-weight:700}
+.lead{color:var(--muted);font-size:1.05rem;max-width:62ch}
+.draft{font-size:.85rem;background:var(--soft);border:1px dashed var(--grey);border-radius:8px;padding:8px 12px;color:var(--muted)}
+section{border-top:1px solid var(--line);padding:30px 0 6px;display:flex;flex-direction:column;gap:16px;min-width:0}
+.num{display:inline-grid;place-items:center;width:1.8rem;height:1.8rem;border-radius:50%;border:1.5px solid var(--accent);color:var(--accent);font-weight:700;font-size:.85rem;margin-right:.6rem;font-family:'DM Sans',sans-serif;vertical-align:middle}
+.tip{background:var(--tip);border-left:3px solid var(--orange);border-radius:6px;padding:12px 16px;font-size:.95rem}
+.mono{font-family:'DM Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums}
+.formula{font-family:'Fraunces',Georgia,serif;font-size:1.15rem;text-align:center;padding:12px 10px;background:var(--soft);border:1px solid var(--line);border-radius:8px;overflow-x:auto;white-space:nowrap}
+.fr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 .15em;font-size:.92em}
+.fr>span:first-child{border-bottom:1.5px solid currentColor;padding:0 .3em .05em}
+.fr>span:last-child{padding:.05em .3em 0}
+.qlist{margin:0;padding-left:1.3rem;display:flex;flex-direction:column;gap:4px}
+.data{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+.chip{border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:6px;padding:6px 10px;font-size:.85rem;color:var(--muted);min-width:0}
+.chip b{display:block;color:var(--fg);font-family:'DM Mono',monospace;font-size:1.02rem;font-weight:500}
+.chip.o{border-left-color:var(--orange)}
+.chip.g{border-left-color:var(--grey)}
+.chip.w{border-left-color:var(--water)}
+.stage{position:relative;width:100%;max-width:520px;margin:0 auto;aspect-ratio:1/1;background:var(--soft);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.stage.wide{max-width:640px;aspect-ratio:2/1}
+.stage canvas{width:100%;height:100%;display:block;touch-action:pan-y;cursor:grab}
+.stage.wide canvas{cursor:default}
+.stage .hint{position:absolute;left:10px;bottom:8px;font-size:.78rem;color:var(--muted);background:rgba(255,255,255,.85);padding:2px 8px;border-radius:999px;pointer-events:none}
+.controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+label{font-size:.9rem;color:var(--muted);display:flex;flex-direction:column;gap:4px;min-width:0}
+label b{color:var(--fg);font-family:'DM Mono',monospace;font-weight:500}
+input[type=range]{width:100%;accent-color:var(--accent)}
+input[type=number]{font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--fg);width:100%;min-width:0}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+button{font:inherit;cursor:pointer;border:1px solid var(--accent);background:var(--accent);color:#fff;padding:7px 15px;border-radius:999px;font-weight:500}
+button.ghost{background:transparent;color:var(--accent)}
+button.ghost.on{background:var(--accent-soft)}
+button:disabled{cursor:default}
+button:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.bars{display:flex;flex-direction:column;gap:8px}
+.bar{display:grid;grid-template-columns:130px 1fr 96px;gap:10px;align-items:center;font-size:.9rem}
+.bar .track{height:14px;background:var(--soft);border-radius:999px;overflow:hidden;border:1px solid var(--line)}
+.bar .fill{height:100%;border-radius:999px;transition:width .25s ease}
+.bar .v{text-align:right;font-family:'DM Mono',monospace;font-variant-numeric:tabular-nums;font-size:.85rem}
+.live{font-family:'DM Mono',monospace;font-size:.86rem;background:var(--soft);border:1px solid var(--line);border-radius:8px;padding:10px 12px;overflow-x:auto;white-space:nowrap}
+.steps{display:flex;flex-direction:column;gap:14px;padding:0;margin:0;list-style:none}
+.step{border-left:3px solid var(--accent);padding:4px 0 4px 14px;display:flex;flex-direction:column;gap:8px;animation:in .35s ease;min-width:0}
+@keyframes in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.step{animation:none}.bar .fill{transition:none}}
+.exp{font-size:.92rem;color:var(--muted)}
+.big{font-family:'Fraunces',Georgia,serif;font-size:2rem;color:var(--orange);font-weight:700;line-height:1.1}
+table{border-collapse:collapse;width:100%;font-size:.92rem}
+td,th{padding:7px 8px;text-align:left;border-bottom:1px solid var(--line)}
+th{font-weight:500;color:var(--muted)}
+td.n{font-family:'DM Mono',monospace;font-variant-numeric:tabular-nums;text-align:right}
+.scroll{overflow-x:auto}
+svg{display:block;width:100%;height:auto;max-width:100%}
+figure{margin:0;display:flex;flex-direction:column;gap:6px;border:1px solid var(--line);border-radius:12px;padding:14px 14px 12px;background:var(--bg)}
+figure .fl{font-weight:700;font-size:.95rem}
+figure .ft{font-style:italic;font-size:.95rem}
+figcaption{font-size:.84rem;color:var(--muted)}
+.q{display:flex;flex-direction:column;gap:8px}
+.q + .q{border-top:1px solid var(--line);padding-top:14px}
+.opts{display:grid;gap:8px}
+.opt{text-align:left;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:10px;font-weight:500}
+.opt.ok{background:var(--ok-soft);border-color:var(--ok)}
+.opt.bad{background:var(--bad-soft);border-color:var(--bad)}
+.err{color:var(--bad);font-size:.9rem}
+.refs{display:flex;flex-direction:column;gap:10px;font-size:.92rem;padding:0;margin:0;list-style:none}
+.refs li{padding-left:1.6rem;text-indent:-1.6rem;overflow-wrap:anywhere}
+.flag{background:#fff4ea;border-radius:4px;padding:0 4px;font-family:'DM Mono',monospace;font-size:.82rem}
+@media (max-width:480px){.bar{grid-template-columns:96px 1fr 78px;font-size:.8rem}}
+</style>
+</head>
+<body>
+
+
+<div class="wrap">
+<header style="display:flex;flex-direction:column;gap:10px">
+  <div class="kicker">Cálculo II · Área de superficie de revolución · Fisicoquímica</div>
+  <h1>¿Qué tan rápido se disuelve un cristal?</h1>
+  <p class="lead">Una pastilla se disuelve por su <b>superficie</b>: cuanta más área toca el agua, más rápido se va. Esa área es una superficie de revolución, así que una integral nos dice cuánto tarda un cristal en desaparecer.</p>
+  <div class="draft"><b>Borrador.</b> Los valores de D, h, Cs y ρ son supuestos de ejemplo, no datos medidos. Revísalos con tu profesor antes de presentar.</div>
+</header>
+
+<section>
+  <h2><span class="num">1</span>El problema</h2>
+  <p>Un cristal de un fármaco tiene forma de <b>esferoide aplastado</b> (como una lenteja). Se obtiene girando alrededor del eje Y la elipse</p>
+  <div class="formula"><span class="fr"><span>x²</span><span>a²</span></span> + <span class="fr"><span>y²</span><span>b²</span></span> = 1 , &nbsp; a = 100 µm, &nbsp; b = 25 µm</div>
+  <div class="data">
+    <div class="chip w">Difusión<b>D = 5×10⁻¹⁰ m²/s</b></div>
+    <div class="chip w">Capa de agua quieta<b>h = 30 µm</b></div>
+    <div class="chip w">Saturación<b>Cs = 0.5 mg/mL</b></div>
+    <div class="chip w">Agua del fondo<b>Cb ≈ 0</b></div>
+    <div class="chip g">Densidad del cristal<b>ρ = 1300 kg/m³</b></div>
+  </div>
+  <ol class="qlist" type="a">
+    <li>Calcula el área S de la superficie del cristal.</li>
+    <li>Calcula su volumen y su masa.</li>
+    <li>¿Qué tan rápido se disuelve al inicio (dm/dt)?</li>
+    <li>Compáralo con una esfera del mismo volumen.</li>
+    <li>Si lo aplastas sin cambiar el volumen, ¿qué pasa con el área? ¿Por qué se muelen los fármacos?</li>
+  </ol>
+</section>
+
+<section>
+  <h2><span class="num">2</span>Mira cómo nace el cristal</h2>
+  <p>La curva <b style="color:var(--orange)">naranja</b> es media elipse. Gira alrededor del eje de giro (línea punteada) y va "pintando" la superficie verde.</p>
+  <div class="stage"><canvas id="cv1" aria-label="Esferoide generado al girar una elipse"></canvas><span class="hint">Arrastra para girar la vista</span></div>
+  <div class="row">
+    <button id="play">▶ Girar la curva</button>
+    <label style="flex:1 1 200px">Ángulo girado: <b id="philab"></b><input type="range" id="phi" min="0" max="360" step="1" value="360"></label>
+  </div>
+  <label>Semi-espesor b: <b id="blab"></b> &nbsp;(con a = 100 µm)
+    <input type="range" id="bsl" min="5" max="100" step="1" value="25">
+  </label>
+  <div class="row" role="group" aria-label="Formas de cristal">
+    <button class="ghost preset" data-b="8">Plaqueta fina</button>
+    <button class="ghost preset" data-b="25">Tu cristal</button>
+    <button class="ghost preset" data-b="100">Esfera</button>
+  </div>
+  <div class="live" id="live"></div>
+  <div class="bars">
+    <div class="bar"><span>Dos discos (b→0)</span><div class="track"><div class="fill" id="f0" style="background:var(--grey)"></div></div><span class="v" id="v0"></span></div>
+    <div class="bar"><span><b>Tu cristal</b></span><div class="track"><div class="fill" id="f1" style="background:var(--orange)"></div></div><span class="v" id="v1"></span></div>
+    <div class="bar"><span>Esfera de radio a</span><div class="track"><div class="fill" id="f2" style="background:var(--accent)"></div></div><span class="v" id="v2"></span></div>
+  </div>
+  <div class="tip" id="bTip"></div>
+</section>
+
+<section>
+  <h2><span class="num">3</span>La integral es una suma de anillos</h2>
+  <p>Cortamos la superficie en <b>anillos</b>. Cada anillo, desenrollado, es casi una tirita de <b>largo 2π·x</b> (su circunferencia) y <b>ancho ds</b> (el pedacito de curva). Suma sus áreas y verás cómo se acerca al valor exacto.</p>
+  <div class="stage"><canvas id="cv2" aria-label="Esferoide aproximado con anillos"></canvas><span class="hint">Anillo elegido en naranja</span></div>
+  <div class="controls">
+    <label>Anillos por mitad n: <b id="nlab"></b><input type="range" id="nsl" min="0" max="12" step="1" value="5"></label>
+    <label>Anillo elegido: <b id="slab"></b><input type="range" id="ssl" min="0" max="5" step="1" value="2"></label>
+  </div>
+  <svg id="strip" viewBox="0 0 600 150" role="img" aria-label="Anillo desenrollado como tirita"></svg>
+  <div class="data">
+    <div class="chip">Suma de anillos<b id="rsum"></b></div>
+    <div class="chip o">Valor exacto (integral)<b id="rex"></b></div>
+    <div class="chip g">Error<b id="rerr"></b></div>
+  </div>
+  <div class="formula">S = <span class="fr"><span>lím</span><span>n→∞</span></span> Σ 2π·x<sub>i</sub>·Δs<sub>i</sub> = 2π ∫ x ds</div>
+</section>
+
+<section>
+  <h2><span class="num">4</span>La solución, paso a paso</h2>
+  <p>Pulsa "Siguiente paso" para ir armando la fórmula.</p>
+  <ol class="steps" id="steps"></ol>
+  <div class="row">
+    <button id="next">Siguiente paso</button>
+    <button id="all" class="ghost">Ver todo</button>
+    <button id="reset" class="ghost">Reiniciar</button>
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">5</span>Noyes–Whitney: el cristal se disuelve</h2>
+  <p>Las moléculas salen del cristal, cruzan una <b>capa de agua quieta</b> de grosor h pegada a su superficie y llegan al resto del líquido. La <b>Figura 1</b> muestra la idea.</p>
+  <figure>
+    <div class="fl">Figura 1</div>
+    <div class="ft">Modelo de la capa de difusión alrededor de un sólido que se disuelve</div>
+    <svg id="fig1" viewBox="0 0 640 300" role="img" aria-label="Esquema de la capa de difusión: concentración Cs en la superficie del sólido que baja linealmente hasta Cb al final de la capa de espesor h"></svg>
+    <figcaption><i>Nota.</i> Esquema de elaboración propia, basado en la ecuación de disolución de Noyes y Whitney (1897) en su forma de capa de difusión (ver Dokoumetzidis y Macheras, 2006). Cs = concentración de saturación en la superficie; Cb = concentración en el seno del líquido; h = espesor de la capa de difusión. Se supone un perfil lineal y una capa de espesor uniforme. <span class="flag">[VERIFICAR contra el texto de las fuentes antes de entregar]</span></figcaption>
+  </figure>
+  <div class="formula" style="color:var(--orange)">dm/dt = <span class="fr"><span>D · A · (C<sub>s</sub> − C<sub>b</sub>)</span><span>h</span></span></div>
+  <div class="data">
+    <div class="chip w">D<b style="font-size:.85rem;font-family:'DM Sans'">qué tan rápido viajan las moléculas</b></div>
+    <div class="chip o">A<b style="font-size:.85rem;font-family:'DM Sans'">área del cristal (¡la integral!)</b></div>
+    <div class="chip w">Cs − Cb<b style="font-size:.85rem;font-family:'DM Sans'">empuje: saturado vs. agua del fondo</b></div>
+    <div class="chip g">h<b style="font-size:.85rem;font-family:'DM Sans'">grosor de la capa quieta (más gruesa = más lento)</b></div>
+  </div>
+  <div class="tip">Si divides entre el volumen V del líquido obtienes cómo cambia la <b>concentración</b>: dC/dt = D·A·(Cs − Cb) / (V·h). Es la forma "modificada" que viste en redes; la fuente a citar es la literatura de la sección 8, no la publicación.</div>
+
+  <h3 style="margin-top:6px">Calculadora de disolución</h3>
+  <div class="controls">
+    <label>a, radio del disco (µm)<input type="number" id="cA" value="100" step="5" min="1"></label>
+    <label>b, semi-espesor (µm)<input type="number" id="cB" value="25" step="1" min="0.5"></label>
+    <label>D (×10⁻¹⁰ m²/s)<input type="number" id="cD" value="5" step="0.5" min="0.01"></label>
+    <label>h (µm)<input type="number" id="cH" value="30" step="1" min="0.1"></label>
+    <label>Cs (mg/mL)<input type="number" id="cS" value="0.5" step="0.05" min="0.001"></label>
+    <label>Cb (mg/mL)<input type="number" id="cC" value="0" step="0.05" min="0"></label>
+    <label>ρ (kg/m³)<input type="number" id="cR" value="1300" step="50" min="1"></label>
+  </div>
+  <div id="cErr" class="err" hidden></div>
+  <div class="scroll"><table>
+    <thead><tr><th></th><th style="text-align:right">Tu cristal</th><th style="text-align:right">Esfera, mismo volumen</th></tr></thead>
+    <tbody id="cTab"></tbody>
+  </table></div>
+  <div class="row" style="align-items:baseline;gap:12px"><span class="big" id="cSave"></span><span class="exp" id="cSaveTxt"></span></div>
+  <p class="exp"><b>Cómo leer la última fila:</b> si el cristal conserva su forma al encogerse y h no cambia, el tamaño baja de forma lineal y el tiempo total es T = 3·ρ·V·h / (D·S·(Cs − Cb)). Es un modelo simple (supuesto mío): en un cristal real las caras no se disuelven igual.</p>
+
+  <h3 style="margin-top:6px">Míralo disolverse (a escala)</h3>
+  <div class="stage wide"><canvas id="cv3" aria-label="Corte del cristal y de la esfera disolviéndose, con su capa de agua azul"></canvas></div>
+  <div class="row">
+    <button id="dplay">▶ Disolver</button>
+    <label style="flex:1 1 220px">Tiempo: <b id="tlab"></b><input type="range" id="tsl" min="0" max="1000" step="1" value="0"></label>
+  </div>
+  <div class="data">
+    <div class="chip o">Masa que queda, cristal<b id="m1"></b></div>
+    <div class="chip g">Masa que queda, esfera<b id="m2"></b></div>
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">6</span>¿Por qué se muelen los fármacos?</h2>
+  <p>Mantén el <b>volumen constante</b> (el de tu cristal) y aplástalo. Con q = b/a, quedan a = r₀·q<sup>−1/3</sup> y b = r₀·q<sup>2/3</sup>, donde r₀ = (a²b)<sup>1/3</sup> ≈ 63.0 µm.</p>
+  <label>Aplastamiento: q = b/a = <b id="qlab"></b>
+    <input type="range" id="qsl" min="0" max="100" step="1" value="48">
+  </label>
+  <div class="row" role="group" aria-label="Formas a volumen constante">
+    <button class="ghost qpre" data-q="1">Esfera</button>
+    <button class="ghost qpre" data-q="0.25">Tu cristal</button>
+    <button class="ghost qpre" data-q="0.05">Plaqueta</button>
+  </div>
+  <svg id="qshape" viewBox="0 0 600 150" role="img" aria-label="Elipse con la misma área de volumen que una esfera de referencia"></svg>
+  <div class="data">
+    <div class="chip">a y b<b id="qab"></b></div>
+    <div class="chip o">S / S esfera<b id="qr"></b></div>
+    <div class="chip g">Velocidad vs. esfera<b id="qv"></b></div>
+  </div>
+  <svg id="qchart" viewBox="0 0 600 272" role="img" aria-label="Gráfica de S sobre S de la esfera contra q"></svg>
+  <div class="tip" id="qTip"></div>
+</section>
+
+<section>
+  <h2><span class="num">7</span>Mini quiz</h2>
+  <div id="quiz"></div>
+  <p style="font-weight:700" id="score"></p>
+</section>
+
+<section>
+  <h2><span class="num">8</span>Referencias</h2>
+  <ul class="refs">
+    <li>Dokoumetzidis, A. y Macheras, P. (2006). A century of dissolution research: From Noyes and Whitney to the Biopharmaceutics Classification System. <i>International Journal of Pharmaceutics, 321</i>(1-2), 1-11. https://doi.org/10.1016/j.ijpharm.2006.07.011</li>
+    <li>Nernst, W. (1904). Theorie der Reaktionsgeschwindigkeit in heterogenen Systemen. <i>Zeitschrift für Physikalische Chemie, 47</i>(1), 52-55. https://doi.org/10.1515/zpch-1904-4704</li>
+    <li>Noyes, A. A. y Whitney, W. R. (1897). The rate of solution of solid substances in their own solutions. <i>Journal of the American Chemical Society, 19</i>, 930-934. https://doi.org/10.1021/ja02086a003</li>
+  </ul>
+  <p class="exp">Brunner (1904), citado a menudo junto a Nernst: <span class="flag">[FUENTE POR VERIFICAR]</span> no confirmé título completo, páginas ni DOI, así que no lo incluyo. De Nernst (1904) solo confirmé los datos de la ficha, no el contenido. Las constantes D, h, Cs y ρ son supuestos de ejemplo.</p>
+</section>
+</div>
+
+<script>
+(function(){
+var PI=Math.PI, PITCH=0.42;
+function $(id){return document.getElementById(id);}
+function fx(x,d){return x.toFixed(d===undefined?3:d);}
+function fm(x,d){return x.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d}).replace(/,/g,' ');}
+function Sfull(a,b){
+  if(b>=a-1e-9) return 4*PI*a*a;
+  var c=Math.sqrt(a*a-b*b);
+  return 2*PI*a*a+2*PI*a*b*b/c*Math.log((a+c)/b);
+}
+function Vol(a,b){return 4/3*PI*a*a*b;}
+function ringPts(a,b,n){var p=[];for(var i=0;i<=n;i++){var t=PI/2*i/n;p.push([a*Math.cos(t),b*Math.sin(t)]);}return p;}
+function ringsArea(a,b,n){var p=ringPts(a,b,n),s=0;for(var i=0;i<n;i++){s+=PI*(p[i][0]+p[i+1][0])*Math.hypot(p[i+1][0]-p[i][0],p[i+1][1]-p[i][1]);}return 2*s;}
+
+var A0=100;
+var NS=[1,2,3,4,5,6,8,10,15,20,30,50,100];
+var st={b:25,phi:360,yaw:-0.75,n:6,sel:3};
+
+/* ---------- 3D render (canvas 2D, painter) ---------- */
+var GREEN=[23,128,90], GREEN2=[118,190,155], ORANGE=[232,89,12];
+var L=(function(){var v=[-0.35,0.62,0.7],m=Math.hypot(v[0],v[1],v[2]);return [v[0]/m,v[1]/m,v[2]/m];})();
+function view(P,yaw){
+  var X=P[0],Y=P[1],Z=P[2],c=Math.cos(yaw),s=Math.sin(yaw);
+  var x1=X*c+Z*s, z1=-X*s+Z*c, cp=Math.cos(PITCH), sp=Math.sin(PITCH);
+  return [x1, Y*cp-z1*sp, Y*sp+z1*cp];
+}
+function shade(rgb,k,alpha){
+  var m=0.42*k, f=0.78+0.22*k;
+  return 'rgba('+Math.round((rgb[0]+(255-rgb[0])*m)*f)+','+Math.round((rgb[1]+(255-rgb[1])*m)*f)+','+Math.round((rgb[2]+(255-rgb[2])*m)*f)+','+alpha+')';
+}
+function P3(t,ph,b){return [Math.cos(t)*Math.cos(ph), b*Math.sin(t), Math.cos(t)*Math.sin(ph)];}
+function draw(canvas,mode){
+  var r=canvas.getBoundingClientRect(); if(!r.width) return;
+  var d=window.devicePixelRatio||1, W=r.width, H=r.height;
+  if(canvas.width!==Math.round(W*d)||canvas.height!==Math.round(H*d)){canvas.width=Math.round(W*d);canvas.height=Math.round(H*d);}
+  var ctx=canvas.getContext('2d'); ctx.setTransform(d,0,0,d,0,0); ctx.clearRect(0,0,W,H);
+  var bn=st.b/A0, yaw=st.yaw, sc=Math.min(W,H)*0.36, cx=W/2, cy=H/2;
+  function scr(v){return [cx+v[0]*sc, cy-v[1]*sc];}
+  var polys=[];
+  function add(world,rgb,alpha,stroke){
+    var v=world.map(function(p){return view(p,yaw);});
+    var ax=v[1][0]-v[0][0],ay=v[1][1]-v[0][1],az=v[1][2]-v[0][2];
+    var bx=v[3][0]-v[0][0],by=v[3][1]-v[0][1],bz=v[3][2]-v[0][2];
+    var nx=ay*bz-az*by, ny=az*bx-ax*bz, nz=ax*by-ay*bx, nm=Math.hypot(nx,ny,nz)||1;
+    var k=Math.abs((nx*L[0]+ny*L[1]+nz*L[2])/nm);
+    var z=(v[0][2]+v[1][2]+v[2][2]+v[3][2])/4;
+    polys.push({pts:v.map(scr),z:z,fill:shade(rgb,k,alpha),stroke:stroke});
+  }
+  if(mode==='sweep'){
+    var phR=st.phi*PI/180, nt=28, np=Math.max(1,Math.ceil(phR/(PI/24)));
+    if(phR>0.001){
+      for(var i=0;i<nt;i++){var t0=-PI/2+PI*i/nt,t1=-PI/2+PI*(i+1)/nt;
+        for(var j2=0;j2<np;j2++){var a0=phR*j2/np,a1=phR*(j2+1)/np;
+          add([P3(t0,a0,bn),P3(t0,a1,bn),P3(t1,a1,bn),P3(t1,a0,bn)],GREEN,0.9,'rgba(255,255,255,.45)');}}
+    }
+  } else {
+    var pts=ringPts(1,bn,st.n), NP=48;
+    for(var half=0;half<2;half++){
+      var sg=half?-1:1;
+      for(var i2=0;i2<st.n;i2++){
+        var rgb=(!half&&i2===st.sel)?ORANGE:(i2%2?GREEN2:GREEN);
+        for(var j3=0;j3<NP;j3++){var q0=2*PI*j3/NP,q1=2*PI*(j3+1)/NP;
+          var A=pts[i2],B=pts[i2+1];
+          add([[A[0]*Math.cos(q0),sg*A[1],A[0]*Math.sin(q0)],[A[0]*Math.cos(q1),sg*A[1],A[0]*Math.sin(q1)],[B[0]*Math.cos(q1),sg*B[1],B[0]*Math.sin(q1)],[B[0]*Math.cos(q0),sg*B[1],B[0]*Math.sin(q0)]],rgb,0.93,'rgba(255,255,255,.25)');}
+      }
+    }
+  }
+  polys.sort(function(p,q){return p.z-q.z;});
+  ctx.lineWidth=0.7;
+  polys.forEach(function(p){ctx.beginPath();ctx.moveTo(p.pts[0][0],p.pts[0][1]);for(var i=1;i<4;i++)ctx.lineTo(p.pts[i][0],p.pts[i][1]);ctx.closePath();ctx.fillStyle=p.fill;ctx.fill();ctx.strokeStyle=p.stroke;ctx.stroke();});
+  var ext=Math.max(bn,0.22)+0.4;
+  var e0=scr(view([0,-ext,0],yaw)), e1=scr(view([0,ext,0],yaw));
+  ctx.save();ctx.setLineDash([5,5]);ctx.strokeStyle='#666a70';ctx.lineWidth=1.3;ctx.beginPath();ctx.moveTo(e0[0],e0[1]);ctx.lineTo(e1[0],e1[1]);ctx.stroke();ctx.restore();
+  ctx.fillStyle='#666a70';ctx.font='12px "DM Mono", monospace';ctx.fillText('eje de giro',Math.min(e1[0]+6,W-84),e1[1]+4);
+  if(mode==='sweep'){
+    var ph=st.phi*PI/180;
+    ctx.strokeStyle='#e8590c';ctx.lineWidth=3.2;ctx.lineCap='round';ctx.beginPath();
+    for(var k2=0;k2<=60;k2++){var s2=scr(view(P3(-PI/2+PI*k2/60,ph,bn),yaw)); if(k2)ctx.lineTo(s2[0],s2[1]); else ctx.moveTo(s2[0],s2[1]);}
+    ctx.stroke();
+    var lab=scr(view(P3(0.9,ph,bn),yaw)); ctx.font='600 13px "DM Sans", sans-serif';
+    var lx=Math.min(lab[0]+10,W-118), ly=Math.max(lab[1]-12,16);
+    ctx.lineWidth=4;ctx.strokeStyle='rgba(255,255,255,.92)';ctx.lineJoin='round';ctx.strokeText('curva generatriz',lx,ly);
+    ctx.fillStyle='#e8590c';ctx.fillText('curva generatriz',lx,ly);
+  }
+}
+function drawAll(){draw($('cv1'),'sweep');draw($('cv2'),'rings');}
+
+[$('cv1'),$('cv2')].forEach(function(cv){
+  var down=false,lx=0;
+  cv.addEventListener('pointerdown',function(e){down=true;lx=e.clientX;try{cv.setPointerCapture(e.pointerId);}catch(_){} cv.style.cursor='grabbing';});
+  cv.addEventListener('pointermove',function(e){if(!down)return;st.yaw+=(e.clientX-lx)*0.01;lx=e.clientX;drawAll();});
+  function up(){down=false;cv.style.cursor='grab';}
+  cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',up);
+});
+window.addEventListener('resize',function(){drawAll();drawDiss();});
+
+/* ---------- sección 2 ---------- */
+function updShape(){
+  var a=A0, b=st.b, S=Sfull(a,b), c=Math.sqrt(Math.max(a*a-b*b,0));
+  var r0=Math.cbrt(a*a*b), Ssph=4*PI*r0*r0;
+  $('blab').textContent=fx(b,0)+' µm';
+  $('philab').textContent=st.phi+'°';
+  var two=2*PI*a*a, sph=4*PI*a*a;
+  $('v0').textContent=fm(two,0)+' µm²'; $('v1').textContent=fm(S,0)+' µm²'; $('v2').textContent=fm(sph,0)+' µm²';
+  $('f0').style.width=(two/sph*100)+'%'; $('f1').style.width=(S/sph*100)+'%'; $('f2').style.width='100%';
+  var live;
+  if(c<1e-6){ live='b = a → c = 0 → es una esfera: S = 4πa² = '+fm(sph,0)+' µm²'; }
+  else{
+    var t1=2*PI*a*a, t2=2*PI*a*b*b/c*Math.log((a+c)/b);
+    live='c = √('+a+'² − '+fx(b,0)+'²) = '+fx(c,2)+' &nbsp;→&nbsp; S = '+fm(t1,0)+' + '+fm(t2,0)+' = <b style="color:var(--orange)">'+fm(S,0)+' µm²</b>';
+  }
+  $('live').innerHTML=live;
+  var msg;
+  if(b>=99.5) msg='<b>Caso extremo b = a:</b> la elipse es un círculo y el cristal es una esfera. La fórmula da exactamente 4πa² ≈ 125 664 µm².';
+  else if(b<=7) msg='<b>Caso extremo b → 0:</b> el cristal se aplasta y el área se acerca a la de dos discos, 2πa² ≈ 62 832 µm². El término con ln casi desaparece.';
+  else if(Math.abs(b-25)<0.5) msg='<b>Tu cristal:</b> S = '+fm(S,0)+' µm². Una esfera con el mismo volumen tendría '+fm(Ssph,0)+' µm²: tu cristal expone <b>'+fx((S/Ssph-1)*100,0)+'% más área</b>.';
+  else msg='Con b = '+fx(b,0)+' µm el área es '+fx(S/Ssph,2)+' veces la de una esfera del mismo volumen (r₀ = '+fx(r0,1)+' µm).';
+  $('bTip').innerHTML=msg;
+  document.querySelectorAll('.preset').forEach(function(btn){btn.classList.toggle('on',Math.abs(+btn.dataset.b-b)<0.5);});
+}
+$('bsl').addEventListener('input',function(){st.b=+this.value;updShape();updRings();drawAll();});
+$('phi').addEventListener('input',function(){st.phi=+this.value;updShape();draw($('cv1'),'sweep');});
+document.querySelectorAll('.preset').forEach(function(btn){btn.addEventListener('click',function(){st.b=+btn.dataset.b;$('bsl').value=st.b;updShape();updRings();drawAll();});});
+var anim=null;
+$('play').addEventListener('click',function(){
+  if(anim) cancelAnimationFrame(anim);
+  var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(reduce){st.phi=360;$('phi').value=360;updShape();draw($('cv1'),'sweep');return;}
+  var t0=null;
+  function step(ts){ if(t0===null)t0=ts; var p=Math.min(1,(ts-t0)/3200); var e=p<.5?2*p*p:1-Math.pow(-2*p+2,2)/2;
+    st.phi=Math.round(360*e); $('phi').value=st.phi; updShape(); draw($('cv1'),'sweep');
+    if(p<1) anim=requestAnimationFrame(step); else anim=null; }
+  anim=requestAnimationFrame(step);
+});
+
+/* ---------- sección 3 ---------- */
+function updRings(){
+  st.n=NS[+$('nsl').value];
+  var ss=$('ssl'); ss.max=st.n-1; if(st.sel>st.n-1) st.sel=Math.floor((st.n-1)/2); ss.value=st.sel;
+  $('nlab').textContent=st.n; $('slab').textContent=(st.sel+1)+' de '+st.n;
+  var b=st.b, ex=Sfull(A0,b), sum=ringsArea(A0,b,st.n);
+  $('rsum').textContent=fm(sum,0)+' µm²'; $('rex').textContent=fm(ex,0)+' µm²'; $('rerr').textContent=fx(Math.abs(ex-sum)/ex*100,3)+' %';
+  var p=ringPts(A0,b,st.n), A=p[st.sel], B=p[st.sel+1];
+  var xm=(A[0]+B[0])/2, ds=Math.hypot(B[0]-A[0],B[1]-A[1]), len=2*PI*xm, area=len*ds;
+  var k=540/(2*PI*A0), w=Math.max(2,len*k), h=Math.max(3,Math.min(70,ds*k));
+  var x0=30, y0=36;
+  var s='<rect x="'+x0+'" y="'+y0+'" width="'+(2*PI*A0*k)+'" height="'+h+'" fill="none" stroke="#e8e8e6" stroke-dasharray="4 4"/>'+
+    '<rect x="'+x0+'" y="'+y0+'" width="'+w+'" height="'+h+'" fill="rgba(232,89,12,.18)" stroke="#e8590c" stroke-width="1.5"/>'+
+    '<text x="'+x0+'" y="'+(y0-10)+'" font-size="14" fill="#141414" font-family="DM Sans, sans-serif">Anillo '+(st.sel+1)+' desenrollado: largo = 2π·x = 2π·'+fx(xm,1)+' = '+fx(len,1)+' µm</text>'+
+    '<text x="'+x0+'" y="'+(y0+h+22)+'" font-size="14" fill="#666a70" font-family="DM Sans, sans-serif">ancho ds = '+fx(ds,1)+' µm &nbsp;→&nbsp; área ≈ '+fx(len,1)+' × '+fx(ds,1)+' = </text>'+
+    '<text x="'+x0+'" y="'+(y0+h+44)+'" font-size="15" fill="#e8590c" font-weight="700" font-family="DM Mono, monospace">'+fm(area,0)+' µm²</text>';
+  $('strip').setAttribute('viewBox','0 0 600 '+(y0+h+56));
+  $('strip').innerHTML=s;
+}
+$('nsl').addEventListener('input',function(){st.sel=Math.floor((NS[+this.value]-1)/2);updRings();draw($('cv2'),'rings');});
+$('ssl').addEventListener('input',function(){st.sel=+this.value;updRings();draw($('cv2'),'rings');});
+
+/* ---------- sección 4: pasos ---------- */
+var STEPS=[
+ ['Datos y dibujo','El eje de giro es el <b>eje Y</b>. Semieje a = 100 µm, semi-espesor b = 25 µm. Distancia focal de la elipse:<div class="formula">c = √(a² − b²) = √(10000 − 625) = √9375 ≈ 96.82 µm</div>'],
+ ['Despejar x = g(y)','Como giramos alrededor del eje Y, el radio de cada anillo es x:<div class="formula">g(y) = <span class="fr"><span>a</span><span>b</span></span>√(b² − y²) , &nbsp; −b ≤ y ≤ b</div>'],
+ ['Derivar g′(y)','Regla de la cadena:<div class="formula">g′(y) = − <span class="fr"><span>a</span><span>b</span></span> · <span class="fr"><span>y</span><span>√(b² − y²)</span></span></div><span class="exp">En y = ±b el denominador vale 0: g′ se va al infinito. El truco siguiente lo arregla.</span>'],
+ ['Plantear la integral (a)','Radio × 2π × pedacito de curva. Por simetría, la mitad de arriba vale lo mismo que la de abajo:<div class="formula">S = 2π ∫<sub>−b</sub><sup>b</sup> g √(1 + g′²) dy = 4π ∫<sub>0</sub><sup>b</sup> g √(1 + g′²) dy</div>'],
+ ['El truco de la raíz','Metemos g dentro de la raíz: g√(1+g′²) = √(g² + (g·g′)²). Como g·g′ = −(a²/b²)·y, al sumar y factorizar a² sale:<div class="formula">g√(1 + g′²) = a√(1 + k²y²) , &nbsp; k = <span class="fr"><span>c</span><span>b²</span></span></div>'],
+ ['Sustituciones','u = k·y (límites 0 → c/b), luego u = tanθ: √(1 + tan²θ) = secθ y aparece ∫sec³θ dθ. Por partes:<div class="formula">∫√(1 + u²) du = <span class="fr"><span>u</span><span>2</span></span>√(1 + u²) + <span class="fr"><span>1</span><span>2</span></span>ln(u + √(1 + u²))</div>'],
+ ['Evaluar: la fórmula general','En u = c/b se cumple √(1 + c²/b²) = a/b. Con las dos mitades:<div class="formula" style="color:var(--orange)">S = 2πa² + <span class="fr"><span>2π a b²</span><span>c</span></span> ln<span style="font-size:1.2em">(</span><span class="fr"><span>a + c</span><span>b</span></span><span style="font-size:1.2em">)</span></div>'],
+ ['Números (a)','ln((100 + 96.82)/25) = 2.0634<div class="formula">S = 62 831.9 + 8 368.8 ≈ <b style="color:var(--orange)">71 200.7 µm²</b></div><span class="exp">Comprobado también con integración numérica: 71 200.697 µm².</span>'],
+ ['Volumen y masa (b)','Discos de radio x y grosor dy: V = π∫x² dy = (4/3)π·a²·b.<div class="formula">V = (4/3)π(100)²(25) ≈ 1 047 198 µm³ = 1.047×10⁻¹² m³</div>Masa = ρV = 1300 × 1.047×10⁻¹² ≈ <b>1.36 µg</b>.'],
+ ['Velocidad inicial (c)','Noyes–Whitney con Cb ≈ 0:<div class="formula">dm/dt = <span class="fr"><span>D·S·Cs</span><span>h</span></span> = <span class="fr"><span>(5×10⁻¹⁰)(7.12×10⁻⁸)(0.5)</span><span>30×10⁻⁶</span></span> ≈ <b style="color:var(--orange)">5.9×10⁻¹³ kg/s ≈ 0.59 ng/s</b></div>A esa velocidad constante tardaría 1.36 µg ÷ 0.59 ng/s ≈ 2 300 s ≈ 38 min (orden de magnitud: el cristal se va encogiendo).'],
+ ['Esfera del mismo volumen (d)','(4/3)πr₀³ = (4/3)πa²b ⇒ r₀ = (a²b)<sup>1/3</sup> = 63.0 µm.<div class="formula">S<sub>esfera</sub> = 4πr₀² ≈ 49 870 µm² &nbsp;→&nbsp; S / S<sub>esfera</sub> ≈ <b style="color:var(--orange)">1.43</b></div>Tu cristal expone <b>43% más área</b> y se disuelve 43% más rápido (0.59 vs 0.42 ng/s). La esfera es la forma de <b>menor área</b> para un volumen dado.'],
+ ['Tiempo total de disolución (extensión)','<span class="exp">Esto lo añadí yo como modelo simple: forma constante y h constante.</span> Si el tamaño baja con un factor s(t): m = ρV₀s³ y dm/dt = −D·S₀·s²·ΔC/h. Resulta s(t) = 1 − t/T con<div class="formula">T = <span class="fr"><span>3·ρ·V·h</span><span>D·S·(Cs − Cb)</span></span> ≈ 6 900 s ≈ 115 min</div>(La esfera del mismo volumen: ≈ 164 min.)'],
+ ['Límites y aplastamiento (e)','<b>b = a:</b> c → 0 y la fórmula tiende a <b>4πa²</b> (esfera) ✓<br><b>b → 0:</b> b² ln(1/b) → 0, así que S → <b>2πa²</b> (dos discos) ✓<br>A volumen constante, para q = b/a pequeño: S/S<sub>esfera</sub> ≈ ½·q<sup>−2/3</sup>, crece sin parar. Cristales delgados = mucha área = disolución rápida: por eso se muelen los fármacos poco solubles.<br><span class="exp">Pruébalo con las secciones 2 y 6.</span>']
+];
+var shown=1;
+function renderSteps(){
+  var h='';for(var i=0;i<shown;i++){h+='<li class="step"><h3>Paso '+(i+1)+': '+STEPS[i][0]+'</h3><div>'+STEPS[i][1]+'</div></li>';}
+  $('steps').innerHTML=h; $('next').disabled=shown>=STEPS.length; $('next').style.opacity=shown>=STEPS.length?.5:1;
+}
+$('next').addEventListener('click',function(){if(shown<STEPS.length){shown++;renderSteps();}});
+$('all').addEventListener('click',function(){shown=STEPS.length;renderSteps();});
+$('reset').addEventListener('click',function(){shown=1;renderSteps();});
+
+/* ---------- sección 5: Figura 1 ---------- */
+(function(){
+  var s='';
+  s+='<rect x="0" y="0" width="640" height="300" fill="#ffffff"/>';
+  s+='<rect x="150" y="40" width="150" height="200" fill="#e9f2fb"/>';
+  s+='<rect x="300" y="40" width="320" height="200" fill="#ffffff" stroke="#e8e8e6"/>';
+  s+='<rect x="40" y="40" width="110" height="200" rx="6" fill="#cfd3cf" stroke="#8a8f96"/>';
+  s+='<text x="95" y="130" text-anchor="middle" font-size="17" font-weight="700" fill="#141414" font-family="DM Sans, sans-serif">Sólido</text>';
+  s+='<text x="95" y="150" text-anchor="middle" font-size="14" fill="#666a70" font-family="DM Sans, sans-serif">(cristal)</text>';
+  s+='<line x1="150" y1="40" x2="150" y2="240" stroke="#8a8f96" stroke-width="2"/>';
+  s+='<line x1="300" y1="40" x2="300" y2="240" stroke="#3b82c4" stroke-width="1.5" stroke-dasharray="5 4"/>';
+  s+='<text x="225" y="62" text-anchor="middle" font-size="16" fill="#3b82c4" font-weight="700" font-family="DM Sans, sans-serif">capa de difusión</text>';
+  s+='<text x="460" y="62" text-anchor="middle" font-size="16" fill="#666a70" font-family="DM Sans, sans-serif">seno del líquido (agitado)</text>';
+  /* perfil: y=95 (Cs) -> y=205 (Cb) */
+  s+='<line x1="150" y1="95" x2="620" y2="95" stroke="#e8590c" stroke-width="1" stroke-dasharray="2 4" opacity=".55"/>';
+  s+='<line x1="150" y1="205" x2="620" y2="205" stroke="#17805a" stroke-width="1" stroke-dasharray="2 4" opacity=".55"/>';
+  s+='<polyline points="150,95 300,205 620,205" fill="none" stroke="#141414" stroke-width="3" stroke-linejoin="round"/>';
+  s+='<circle cx="150" cy="95" r="5" fill="#e8590c"/><circle cx="300" cy="205" r="5" fill="#17805a"/>';
+  s+='<text x="158" y="86" font-size="17" font-weight="700" fill="#e8590c" font-family="DM Mono, monospace">Cs</text>';
+  s+='<text x="540" y="196" font-size="17" font-weight="700" fill="#17805a" font-family="DM Mono, monospace">Cb</text>';
+  /* moléculas: más densas cerca del sólido */
+  var seed=7; function rnd(){seed=(seed*16807)%2147483647;return seed/2147483647;}
+  for(var i=0;i<46;i++){
+    var x=155+rnd()*465, frac=Math.min(1,(x-150)/150), dens=1-0.78*frac;
+    if(rnd()>dens*0.9) continue;
+    var yy=108+rnd()*120; if(x<300){ var lineY=95+(x-150)/150*110; if(yy<lineY+10) yy=lineY+10+rnd()*30; }
+    s+='<circle cx="'+x.toFixed(1)+'" cy="'+Math.min(yy,236).toFixed(1)+'" r="3" fill="#3b82c4" opacity=".7"/>';
+  }
+  /* flecha de flujo */
+  s+='<defs><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#17805a"/></marker></defs>';
+  s+='<line x1="170" y1="262" x2="610" y2="262" stroke="#17805a" stroke-width="2" marker-end="url(#ah)"/>';
+  s+='<text x="390" y="283" text-anchor="middle" font-size="16" fill="#17805a" font-family="DM Sans, sans-serif">las moléculas viajan hacia donde hay menos (difusión)</text>';
+  /* cota h */
+  s+='<line x1="150" y1="22" x2="300" y2="22" stroke="#141414" stroke-width="1.5"/><line x1="150" y1="16" x2="150" y2="28" stroke="#141414" stroke-width="1.5"/><line x1="300" y1="16" x2="300" y2="28" stroke="#141414" stroke-width="1.5"/>';
+  s+='<text x="225" y="16" text-anchor="middle" font-size="18" font-weight="700" fill="#141414" font-family="DM Mono, monospace">h</text>';
+
+  $('fig1').innerHTML=s;
+})();
+
+/* ---------- sección 5: calculadora ---------- */
+var CALC=null;
+function calc(){
+  var a=+$('cA').value, b=+$('cB').value, D=+$('cD').value*1e-10, h=+$('cH').value*1e-6, Cs=+$('cS').value, Cb=+$('cC').value, rho=+$('cR').value;
+  var err=$('cErr');
+  CALC=null;
+  if(!(a>0&&b>0&&D>0&&h>0&&Cs>0&&rho>0&&Cb>=0)){err.hidden=false;err.textContent='Todos los datos deben ser positivos (Cb puede ser 0).';return;}
+  if(b>a+1e-9){err.hidden=false;err.textContent='b no puede ser mayor que a (sería otra forma: esferoide alargado).';return;}
+  if(Cb>=Cs){err.hidden=false;err.textContent='Cb debe ser menor que Cs; si no, no hay disolución.';return;}
+  err.hidden=true;
+  var dC=Cs-Cb;
+  var S1=Sfull(a,b)*1e-12, V1=Vol(a,b)*1e-18, r0=Math.cbrt(a*a*b), S2=4*PI*r0*r0*1e-12;
+  function rate(S){return D*S*dC/h;}
+  function T(S){return 3*rho*V1*h/(D*S*dC);}
+  var m=rho*V1, R1=rate(S1), R2=rate(S2), T1=T(S1), T2=T(S2);
+  CALC={a:a,b:b,h:h*1e6,r0:r0,T1:T1,T2:T2};
+  $('cTab').innerHTML=
+    '<tr><td>Área S</td><td class="n"><b style="color:var(--orange)">'+fm(S1*1e12,0)+' µm²</b></td><td class="n">'+fm(S2*1e12,0)+' µm²</td></tr>'+
+    '<tr><td>Volumen V</td><td class="n">'+fm(V1*1e18,0)+' µm³</td><td class="n">'+fm(V1*1e18,0)+' µm³</td></tr>'+
+    '<tr><td>Masa ρV</td><td class="n">'+fx(m*1e9,3)+' µg</td><td class="n">'+fx(m*1e9,3)+' µg</td></tr>'+
+    '<tr><td>dm/dt inicial</td><td class="n"><b style="color:var(--orange)">'+fx(R1*1e12,3)+' ng/s</b></td><td class="n">'+fx(R2*1e12,3)+' ng/s</td></tr>'+
+    '<tr><td>Tiempo total T</td><td class="n"><b>'+fx(T1/60,0)+' min</b></td><td class="n">'+fx(T2/60,0)+' min</td></tr>';
+  $('cSave').textContent=fx(S1/S2,2)+'×';
+  $('cSaveTxt').textContent='el área del cristal frente a la esfera del mismo volumen (r₀ = '+fx(r0,1)+' µm). Se disuelve '+fx((S1/S2-1)*100,0)+'% más rápido y tarda '+fx(T2/60-T1/60,0)+' min menos.';
+  updDiss();
+}
+['cA','cB','cD','cH','cS','cC','cR'].forEach(function(id){$(id).addEventListener('input',calc);});
+
+/* ---------- sección 5: simulación a escala ---------- */
+var dv={f:0};
+function ellipsePath(ctx,cx,cy,rx,ry){ctx.beginPath();ctx.ellipse(cx,cy,Math.max(rx,0.01),Math.max(ry,0.01),0,0,2*PI);}
+function drawDiss(){
+  var cv=$('cv3'); if(!cv) return;
+  var r=cv.getBoundingClientRect(); if(!r.width) return;
+  var d=window.devicePixelRatio||1, W=r.width, H=r.height;
+  if(cv.width!==Math.round(W*d)||cv.height!==Math.round(H*d)){cv.width=Math.round(W*d);cv.height=Math.round(H*d);}
+  var ctx=cv.getContext('2d'); ctx.setTransform(d,0,0,d,0,0); ctx.clearRect(0,0,W,H);
+  if(!CALC){ctx.fillStyle='#c0392b';ctx.font='14px "DM Sans", sans-serif';ctx.fillText('Revisa los datos de la calculadora',14,28);return;}
+  var a=CALC.a,b=CALC.b,h=CALC.h,r0=CALC.r0;
+  var T2=CALC.T2, t=dv.f*T2;
+  var s1=Math.max(0,1-t/CALC.T1), s2=Math.max(0,1-t/T2);
+  var k=Math.min(W/2*0.9/2/Math.max(a,r0)*1.0, H*0.78/2/Math.max(b,r0)) ;
+  var k1=Math.min(W/2*0.92/2/(a+h), H*0.62/2/(Math.max(b,r0)+h));
+  k=k1;
+  var cy=H*0.54, c1=W*0.25, c2=W*0.75;
+  function shape(cx,rx,ry,s,col,label,mass){
+    // contorno original
+    ctx.save();ctx.setLineDash([4,4]);ctx.strokeStyle='#b8bcc0';ctx.lineWidth=1;ellipsePath(ctx,cx,cy,rx*k,ry*k);ctx.stroke();ctx.restore();
+    if(s>0.004){
+      // capa de agua: franja de ancho h alrededor
+      ctx.save();ctx.strokeStyle='rgba(59,130,196,.22)';ctx.lineWidth=2*h*k;ellipsePath(ctx,cx,cy,rx*s*k,ry*s*k);ctx.stroke();ctx.restore();
+      ctx.fillStyle=col;ellipsePath(ctx,cx,cy,rx*s*k,ry*s*k);ctx.fill();
+      ctx.strokeStyle='rgba(20,20,20,.55)';ctx.lineWidth=1.2;ctx.stroke();
+    }
+    ctx.fillStyle='#141414';ctx.font='600 13px "DM Sans", sans-serif';ctx.textAlign='center';
+    ctx.fillText(label,cx,H*0.09);
+    ctx.fillStyle='#666a70';ctx.font='12px "DM Mono", monospace';
+    ctx.fillText(s>0.004?('queda '+fx(mass*100,0)+' %'):'disuelto ✓',cx,H*0.96);
+    ctx.textAlign='left';
+  }
+  shape(c1,a,b,s1,'rgba(232,89,12,.85)','Tu cristal',s1*s1*s1);
+  shape(c2,r0,r0,s2,'rgba(23,128,90,.85)','Esfera, mismo volumen',s2*s2*s2);
+  // cota de h junto al cristal
+  if(s1>0.05){
+    var xe=c1+a*s1*k, y0=cy+ (b*s1*k>0?0:0);
+    ctx.strokeStyle='#3b82c4';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(xe,cy);ctx.lineTo(xe+h*k,cy);ctx.moveTo(xe,cy-5);ctx.lineTo(xe,cy+5);ctx.moveTo(xe+h*k,cy-5);ctx.lineTo(xe+h*k,cy+5);ctx.stroke();
+    ctx.fillStyle='#3b82c4';ctx.font='700 12px "DM Mono", monospace';ctx.textAlign='center';ctx.fillText('h',xe+h*k/2,cy-9);ctx.textAlign='left';
+  }
+  $('m1').textContent=fx(s1*s1*s1*100,0)+' %'; $('m2').textContent=fx(s2*s2*s2*100,0)+' %';
+  $('tlab').textContent=fx(t/60,0)+' min';
+}
+function updDiss(){drawDiss();}
+$('tsl').addEventListener('input',function(){dv.f=+this.value/1000;drawDiss();});
+var danim=null;
+$('dplay').addEventListener('click',function(){
+  if(danim) cancelAnimationFrame(danim);
+  var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(reduce){dv.f=1;$('tsl').value=1000;drawDiss();return;}
+  var t0=null, from=dv.f>=0.999?0:dv.f;
+  function step(ts){ if(t0===null)t0=ts; var p=Math.min(1,(ts-t0)/7000); dv.f=from+(1-from)*p; $('tsl').value=Math.round(dv.f*1000); drawDiss();
+    if(p<1) danim=requestAnimationFrame(step); else danim=null; }
+  danim=requestAnimationFrame(step);
+});
+
+/* ---------- sección 6: volumen constante ---------- */
+var R0=Math.cbrt(100*100*25);
+function qFromV(v){return Math.pow(10,-1.699*v/100);}
+function ratioQ(q){var a=R0*Math.pow(q,-1/3), b=R0*Math.pow(q,2/3);return Sfull(a,b)/(4*PI*R0*R0);}
+function updQ(){
+  var v=+$('qsl').value, q=qFromV(v);
+  var a=R0*Math.pow(q,-1/3), b=R0*Math.pow(q,2/3), rt=ratioQ(q);
+  $('qlab').textContent=fx(q,3);
+  $('qab').textContent=fx(a,1)+' / '+fx(b,1)+' µm'; $('qr').textContent=fx(rt,2)+'×'; $('qv').textContent=rt>=1.005?('+'+fx((rt-1)*100,0)+' %'):'igual';
+  // forma
+  var k=0.55, cx=300, cy=75;
+  var sh='<circle cx="'+cx+'" cy="'+cy+'" r="'+(R0*k)+'" fill="none" stroke="#8a8f96" stroke-dasharray="5 4" stroke-width="1.5"/>'+
+    '<ellipse cx="'+cx+'" cy="'+cy+'" rx="'+(a*k)+'" ry="'+Math.max(b*k,0.8)+'" fill="rgba(232,89,12,.8)" stroke="#e8590c" stroke-width="1.5"/>'+
+    '<text x="12" y="20" font-size="12" fill="#666a70" font-family="DM Sans, sans-serif">Corte del cristal (naranja) frente a la esfera de igual volumen (punteada)</text>';
+  $('qshape').innerHTML=sh;
+  // gráfica: x = -log10(q)/1.699, y = S/Ssph de 0 a 7
+  var x0=50,x1=580,y0=225,y1=20, YM=7;
+  function X(qq){return x0+(-Math.log10(qq)/1.699)*(x1-x0);}
+  function Y(r){return y0-(r/YM)*(y0-y1);}
+  var g='<line x1="'+x0+'" y1="'+y0+'" x2="'+x1+'" y2="'+y0+'" stroke="#8a8f96"/><line x1="'+x0+'" y1="'+y0+'" x2="'+x0+'" y2="'+y1+'" stroke="#8a8f96"/>';
+  for(var yy=1;yy<=7;yy++){g+='<line x1="'+x0+'" y1="'+Y(yy)+'" x2="'+x1+'" y2="'+Y(yy)+'" stroke="#e8e8e6"/><text x="'+(x0-8)+'" y="'+(Y(yy)+4)+'" text-anchor="end" font-size="14" fill="#666a70" font-family="DM Mono, monospace">'+yy+'</text>';}
+  [1,0.5,0.25,0.1,0.05,0.02].forEach(function(qq){g+='<line x1="'+X(qq)+'" y1="'+y0+'" x2="'+X(qq)+'" y2="'+(y0+5)+'" stroke="#8a8f96"/><text x="'+X(qq)+'" y="'+(y0+18)+'" text-anchor="middle" font-size="14" fill="#666a70" font-family="DM Mono, monospace">'+qq+'</text>';});
+  var pts=[];for(var i=0;i<=120;i++){var qq=Math.pow(10,-1.699*i/120);pts.push(X(qq).toFixed(1)+','+Y(ratioQ(qq)).toFixed(1));}
+  g+='<line x1="'+x0+'" y1="'+Y(1)+'" x2="'+x1+'" y2="'+Y(1)+'" stroke="#17805a" stroke-dasharray="5 4"/><text x="'+(x1-4)+'" y="'+(Y(1)-6)+'" text-anchor="end" font-size="14" fill="#17805a" font-family="DM Sans, sans-serif">esfera = 1</text>';
+  g+='<polyline points="'+pts.join(' ')+'" fill="none" stroke="#141414" stroke-width="2.5"/>';
+  g+='<circle cx="'+X(q)+'" cy="'+Y(rt)+'" r="6" fill="#e8590c" stroke="#fff" stroke-width="2"/>';
+  g+='<text x="'+((x0+x1)/2)+'" y="264" text-anchor="middle" font-size="14" fill="#666a70" font-family="DM Sans, sans-serif">q = b/a (más aplastado →)</text>';
+  g+='<text x="14" y="125" font-size="14" fill="#666a70" font-family="DM Sans, sans-serif" transform="rotate(-90 14 125)">S / S esfera</text>';
+  $('qchart').innerHTML=g;
+  var msg;
+  if(q>0.97) msg='<b>q = 1:</b> es la esfera, la forma de <b>menor área</b> para ese volumen. Es la más lenta en disolverse.';
+  else if(q<0.06) msg='<b>Plaqueta fina:</b> '+fx(rt,1)+' veces el área de la esfera. Tarda '+fx(rt,1)+' veces menos en disolverse (a igual h): por eso se muelen y se micronizan los fármacos poco solubles.';
+  else msg='Aplastar el cristal <b>sin cambiar su volumen</b> hace crecer el área: '+fx(rt,2)+' veces la de la esfera, y la velocidad inicial de disolución crece igual.';
+  $('qTip').innerHTML=msg;
+  document.querySelectorAll('.qpre').forEach(function(btn){btn.classList.toggle('on',Math.abs(+btn.dataset.q-q)<0.012);});
+}
+$('qsl').addEventListener('input',updQ);
+document.querySelectorAll('.qpre').forEach(function(btn){btn.addEventListener('click',function(){var q=+btn.dataset.q;$('qsl').value=Math.round(-Math.log10(q)/1.699*100);updQ();});});
+
+/* ---------- sección 7: quiz ---------- */
+var QZ=[
+ {q:'En la ecuación de Noyes–Whitney, ¿de dónde sale el área A de un cristal en forma de esferoide?',o:['De una tabla del libro','De la integral S = 2π∫ x ds (superficie de revolución)','De multiplicar a por b','No hace falta, es una constante'],a:1,e:'Las moléculas salen por la superficie, y esa superficie se obtiene girando la elipse: S = 2π∫ x ds.'},
+ {q:'Si duplicas el grosor h de la capa de agua quieta (lo demás igual), la velocidad inicial de disolución…',o:['Se duplica','No cambia','Se reduce a la mitad','Se cuadruplica'],a:2,e:'h está en el denominador: dm/dt = D·A·(Cs − Cb)/h. Doble h, mitad de velocidad.'},
+ {q:'Entre todas las formas con el mismo volumen, ¿cuál tiene la menor área de superficie?',o:['La lenteja aplastada','El cilindro','La esfera','El disco'],a:2,e:'La esfera. Por eso es la forma que se disuelve más lento: S / S esfera ≥ 1 para cualquier otra forma.'},
+ {q:'Si aplastas un cristal manteniendo su volumen (q = b/a cada vez menor), el área…',o:['Baja hasta un mínimo','Se queda igual','Crece sin parar','Primero sube y luego baja'],a:2,e:'S / S esfera ≈ ½·q^(−2/3) para q pequeño: crece sin límite. Por eso se muelen los fármacos.'},
+ {q:'Para resolver ∫√(1 + u²) du, ¿qué sustitución usamos?',o:['u = senθ','u = secθ','u = tanθ','u = e^θ'],a:2,e:'Con u = tanθ se cumple 1 + tan²θ = sec²θ, la raíz se vuelve secθ y aparece ∫sec³θ dθ, que se hace por partes.'}
+];
+var correct=0,answered=0;
+(function(){var h='';QZ.forEach(function(z,i){h+='<div class="q" data-i="'+i+'"><b>'+(i+1)+'. '+z.q+'</b><div class="opts">';z.o.forEach(function(o,j){h+='<button class="opt" data-j="'+j+'">'+o+'</button>';});h+='</div><div class="exp" hidden></div></div>';});$('quiz').innerHTML=h;})();
+$('quiz').addEventListener('click',function(ev){
+  var b=ev.target.closest('.opt'); if(!b)return; var qd=b.closest('.q'); if(qd.dataset.done)return; qd.dataset.done='1';
+  var z=QZ[+qd.dataset.i], j=+b.dataset.j, bs=qd.querySelectorAll('.opt'); bs[z.a].classList.add('ok');
+  if(j===z.a)correct++; else b.classList.add('bad'); answered++;
+  var ex=qd.querySelector('.exp'); ex.hidden=false; ex.textContent=(j===z.a?'¡Correcto! ':'Casi. ')+z.e;
+  if(answered===QZ.length)$('score').textContent='Tu puntaje: '+correct+' de '+QZ.length;
+});
+
+updShape(); updRings(); renderSteps(); calc(); updQ(); drawAll();
+if(document.fonts&&document.fonts.ready){document.fonts.ready.then(function(){drawAll();drawDiss();});}
+})();
+</script>
+
+</body>
+</html>
