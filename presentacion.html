@@ -6,24 +6,24 @@
 <title>Cristal que se disuelve · Exposición</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=DM+Sans:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Tinos:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
 <style>
 :root{
-  color-scheme:light;
-  --bg:#ffffff; --fg:#141414; --muted:#666a70; --line:#e8e8e6; --soft:#f6f6f4;
-  --accent:#17805a; --water:#3b82c4; --accent-soft:#eaf6f0; --tip:#fff4ea; --orange:#e8590c; --grey:#8a8f96;
-  --bad:#c0392b;
+  color-scheme:dark;
+  --bg:#0b1321; --fg:#eef2f8; --muted:#8c99a8; --line:#233046; --soft:#111c2e;
+  --accent:#5cc7ed; --water:#5cc7ed; --accent-soft:#13283a; --tip:#2a2414; --orange:#f27389; --yel:#f5c45c; --green:#73d999; --grey:#8c99a8;
+  --bad:#ff7a7a;
 }
 *{box-sizing:border-box}
-html,body{height:100%;margin:0}
-body{background:var(--bg);color:var(--fg);font-family:'DM Sans',system-ui,sans-serif;font-size:clamp(15px,1.55vw,21px);line-height:1.5;overflow:hidden}
-h1,h2{font-family:'Fraunces',Georgia,serif;font-weight:500;line-height:1.12;margin:0;text-wrap:balance}
+html,body{font-variant-numeric:tabular-nums;height:100%;margin:0}
+body{background:radial-gradient(ellipse at 50% 45%,rgba(31,51,82,.55),rgba(0,0,0,0) 70%),linear-gradient(180deg,#0b1321,#060b16);background-attachment:fixed;background-color:#0b1321;color:var(--fg);font-family:'Times New Roman',Tinos,Times,serif;font-size:clamp(15px,1.55vw,21px);line-height:1.5;overflow:hidden}
+h1,h2{font-family:'Times New Roman',Tinos,Times,serif;font-weight:500;line-height:1.12;margin:0;text-wrap:balance}
 h1{font-size:clamp(1.9rem,4.4vw,3.5rem);letter-spacing:-.01em}
 h2{font-size:clamp(1.5rem,3vw,2.3rem)}
 p{margin:0}
 #app{position:fixed;inset:0;display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0)}
 .top{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px clamp(14px,3vw,36px);border-bottom:1px solid var(--line);font-size:.72em;color:var(--muted);flex:none}
-.brand{letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--orange)}
+.brand{letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--yel)}
 .chip{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:999px;padding:4px 12px;background:var(--bg);color:var(--fg);font:inherit;font-size:1em;cursor:default}
 button.chip{cursor:pointer}
 .dot{width:9px;height:9px;border-radius:50%;background:var(--grey)}
@@ -35,42 +35,42 @@ button.chip{cursor:pointer}
 .grid{display:grid;grid-template-columns:minmax(0,1.02fr) minmax(0,1fr);gap:clamp(18px,3.5vw,52px);align-items:center;min-height:100%;max-width:1400px;margin:0 auto}
 .col{display:flex;flex-direction:column;gap:clamp(10px,1.6vw,20px);min-width:0}
 @media (max-width:860px),(orientation:portrait){.grid{grid-template-columns:minmax(0,1fr);align-content:start}}
-.kicker{font-size:.72em;letter-spacing:.16em;text-transform:uppercase;color:var(--orange);font-weight:700}
+.kicker{color:var(--yel)!important;font-size:.72em;letter-spacing:.16em;text-transform:uppercase;color:var(--orange);font-weight:700}
 .lead{color:var(--muted);font-size:1.08em;max-width:46ch}
 .rv{opacity:0;transform:translateY(10px);transition:opacity .55s ease,transform .55s ease}
 .rv.in{opacity:1;transform:none}
-.formula{font-family:'Fraunces',Georgia,serif;font-size:1.12em;text-align:center;padding:.6em .7em;background:var(--soft);border:1px solid var(--line);border-radius:10px;overflow-x:auto;white-space:nowrap}
+.formula{font-family:'Times New Roman',Tinos,Times,serif;font-size:1.12em;text-align:center;padding:.6em .7em;background:var(--soft);border:1px solid var(--line);border-radius:10px;overflow-x:auto;white-space:nowrap}
 .fr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 .15em;font-size:.92em}
 .fr>span:first-child{border-bottom:1.5px solid currentColor;padding:0 .3em .05em}
 .fr>span:last-child{padding:.05em .3em 0}
 .ov{border-top:1.5px solid currentColor;padding-top:1px}
 .chips{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px}
 .cp{border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:8px;padding:6px 10px;font-size:.8em;color:var(--muted)}
-.cp b{display:block;color:var(--fg);font-family:'DM Mono',monospace;font-size:1.1em;font-weight:500}
+.cp b{display:block;color:var(--fg);font-family:'Times New Roman',Tinos,Times,serif;font-size:1.1em;font-weight:500}
 .cp.o{border-left-color:var(--orange)} .cp.g{border-left-color:var(--grey)}
 .qs{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px}
 .qs li{display:flex;gap:10px;align-items:baseline}
 .qs li i{font-style:normal;font-weight:700;color:var(--accent);min-width:1.3em}
-.tip{background:var(--tip);border-left:3px solid var(--orange);border-radius:6px;padding:.6em .9em;font-size:.9em}
+.tip{background:var(--tip);border-left:3px solid var(--yel);border-radius:6px;padding:.6em .9em;font-size:.9em}
 .cv{width:100%;max-width:min(100%,62vh);aspect-ratio:1/1;background:var(--soft);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin:0 auto}
 .cv canvas{width:100%;height:100%;display:block}
 .ctrl{display:flex;flex-direction:column;gap:4px;font-size:.85em;color:var(--muted);padding:6px 8px;border-radius:10px;border:1px solid transparent;transition:border-color .3s,background .3s}
 .ctrl.act{border-color:var(--accent);background:var(--accent-soft)}
-.ctrl b{color:var(--fg);font-family:'DM Mono',monospace;font-weight:500}
+.ctrl b{color:var(--fg);font-family:'Times New Roman',Tinos,Times,serif;font-weight:500}
 input[type=range]{width:100%;accent-color:var(--accent);pointer-events:none}
 .btns{display:flex;gap:8px;flex-wrap:wrap}
 .pb{font:inherit;font-size:.85em;border:1px solid var(--accent);background:transparent;color:var(--accent);padding:5px 14px;border-radius:999px;font-weight:500;transition:all .25s;pointer-events:none}
-.pb.press{background:var(--accent);color:#fff;transform:scale(1.07);box-shadow:0 0 0 4px rgba(23,128,90,.22)}
-.live2{font-family:'DM Mono',monospace;font-size:.76em;background:var(--soft);border:1px solid var(--line);border-radius:8px;padding:8px 10px;overflow-x:auto;white-space:nowrap}
+.pb.press{background:var(--accent);color:#0b1321;transform:scale(1.07);box-shadow:0 0 0 4px rgba(92,199,237,.22)}
+.live2{font-family:'Times New Roman',Tinos,Times,serif;font-size:.76em;background:var(--soft);border:1px solid var(--line);border-radius:8px;padding:8px 10px;overflow-x:auto;white-space:nowrap}
 .bars{display:flex;flex-direction:column;gap:6px}
 .bar{display:grid;grid-template-columns:96px 1fr 108px;gap:8px;align-items:center;font-size:.82em}
 .bar .tr{height:12px;background:var(--soft);border-radius:999px;overflow:hidden;border:1px solid var(--line)}
 .bar .fl{height:100%;border-radius:999px}
-.bar .v{text-align:right;font-family:'DM Mono',monospace;white-space:nowrap}
+.bar .v{text-align:right;font-family:'Times New Roman',Tinos,Times,serif;white-space:nowrap}
 svg{display:block;width:100%;height:auto;max-width:100%}
 .fig{max-height:30vh;width:auto;margin:0 auto}
 .figw{max-height:36vh;width:100%;margin:0 auto}
-.caption{font-family:'Fraunces',Georgia,serif;font-size:1.15em;min-height:2.4em}
+.caption{font-family:'Times New Roman',Tinos,Times,serif;font-size:1.15em;min-height:2.4em}
 .steps{display:flex;flex-direction:column;gap:6px;max-width:1100px;margin:0 auto}
 .st{display:grid;grid-template-columns:2.1em minmax(0,1fr);gap:12px;align-items:center;padding:5px 12px;border:1px solid var(--line);border-radius:12px;transition:border-color .4s,background .4s,opacity .5s,transform .5s}
 .st.cur{border-color:var(--accent);background:var(--accent-soft)}
@@ -78,33 +78,34 @@ svg{display:block;width:100%;height:auto;max-width:100%}
 .st>div{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,2.3fr);gap:12px;align-items:center;min-width:0}
 .st h3{margin:0;font-size:.8em;color:var(--muted);font-weight:500}
 @media (max-width:860px),(orientation:portrait){.st>div{grid-template-columns:minmax(0,1fr);gap:2px}}
-.st .f{font-family:'Fraunces',Georgia,serif;font-size:.98em;overflow-x:auto;white-space:nowrap}
+.st .f{font-family:'Times New Roman',Tinos,Times,serif;font-size:.98em;overflow-x:auto;white-space:nowrap}
 .st.fin .f{color:var(--orange);font-weight:700}
 table{border-collapse:collapse;width:100%;font-size:.9em}
 td,th{padding:7px 8px;text-align:left;border-bottom:1px solid var(--line)}
 th{font-weight:500;color:var(--muted)}
-td.n{font-family:'DM Mono',monospace;text-align:right;font-variant-numeric:tabular-nums}
-.inp{font-family:'DM Mono',monospace;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);font-size:.95em}
-.big{font-family:'Fraunces',Georgia,serif;font-size:2.4em;color:var(--orange);font-weight:700;line-height:1.1}
+td.n{font-family:'Times New Roman',Tinos,Times,serif;text-align:right;font-variant-numeric:tabular-nums}
+.inp{font-family:'Times New Roman',Tinos,Times,serif;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);font-size:.95em}
+.big{font-family:'Times New Roman',Tinos,Times,serif;font-size:2.4em;color:var(--yel);font-weight:700;line-height:1.1}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .card{border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:4px}
-.card b{font-family:'Fraunces',Georgia,serif;font-size:1.15em}
+.card b{font-family:'Times New Roman',Tinos,Times,serif;font-size:1.15em}
 .qrcard{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;padding:clamp(14px,2vw,26px);border:1px solid var(--line);border-radius:18px;background:var(--bg);max-width:380px;margin:0 auto}
+.qrcard #qr{background:#fff;padding:8px;border-radius:10px;line-height:0}
 .qrcard svg{width:min(60vw,280px,34vh);height:auto}
-.qrcard code{font-family:'DM Mono',monospace;font-size:.62em;color:var(--muted);word-break:break-all}
+.qrcard code{font-family:'Times New Roman',Tinos,Times,serif;font-size:.62em;color:var(--muted);word-break:break-all}
 .vid{display:flex;flex-direction:column;align-items:center;gap:12px}
-.vid video{height:min(70vh,calc(100vh - 220px));max-width:100%;border-radius:12px;background:#0a1220;aspect-ratio:9/16}
+.vid video{height:min(70vh,calc(100vh - 220px));max-width:100%;border-radius:12px;background:#060b16;aspect-ratio:9/16}
 .bottom{flex:none;border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0)}
 #pbar{height:4px;background:var(--line)} #pfill{height:100%;width:0;background:var(--accent)}
 #ctl{display:flex;justify-content:center;align-items:center;gap:10px;padding:8px 12px;flex-wrap:wrap}
 #ctl button{font:inherit;font-size:.85em;border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:999px;padding:6px 16px;cursor:pointer}
-#ctl button.go{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:700;animation:glow 1.6s infinite}
-@keyframes glow{50%{box-shadow:0 0 0 7px rgba(23,128,90,.2)}}
+#ctl button.go{background:var(--accent);border-color:var(--accent);color:#0b1321;font-weight:700;animation:glow 1.6s infinite}
+@keyframes glow{50%{box-shadow:0 0 0 7px rgba(92,199,237,.2)}}
 body[data-mode=viewer] #ctl{display:none}
 body[data-mode=viewer] #ctl.show{display:flex}
 #wait{position:absolute;inset:0;z-index:5;background:var(--bg);display:none;flex-direction:column;justify-content:center;align-items:center;gap:14px;text-align:center;padding:24px}
 #wait.on{display:flex}
-#wait button{font:inherit;border:1px solid var(--accent);background:var(--accent);color:#fff;padding:9px 20px;border-radius:999px;font-weight:700;cursor:pointer}
+#wait button{font:inherit;border:1px solid var(--accent);background:var(--accent);color:#0b1321;padding:9px 20px;border-radius:999px;font-weight:700;cursor:pointer}
 .spin{width:34px;height:34px;border-radius:50%;border:4px solid var(--line);border-top-color:var(--accent);animation:sp 1s linear infinite}
 @keyframes sp{to{transform:rotate(360deg)}}
 @media (prefers-reduced-motion:reduce){.rv,.st{transition:none}.spin,.live .dot,#ctl button.go{animation:none}}
@@ -117,7 +118,7 @@ body[data-mode=viewer] #ctl.show{display:flex}
 .figbox .fl{font-weight:700;font-size:.9em}.figbox .ft{font-style:italic;font-size:.9em}.figbox .fc{font-size:.7em;color:var(--muted);line-height:1.4}
 .refs{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px;font-size:.8em}
 .refs li{padding-left:1.6em;text-indent:-1.6em;overflow-wrap:anywhere}
-.flag{background:#fff4ea;border-radius:4px;padding:0 4px;font-family:'DM Mono',monospace;font-size:.85em}
+.flag{background:#2a2414;border-radius:4px;padding:0 4px;font-family:'Times New Roman',Tinos,Times,serif;font-size:.85em}
 .draft{font-size:.72em;background:var(--soft);border:1px dashed var(--grey);border-radius:8px;padding:6px 10px;color:var(--muted)}
 @media (orientation:portrait){.cvw{max-width:100%}}
 </style>
@@ -167,13 +168,13 @@ body[data-mode=viewer] #ctl.show{display:flex}
       </div>
       <div class="col">
         <svg viewBox="0 0 400 250" class="rv fig" data-at="1" role="img" aria-label="Elipse con semiejes a y b que gira alrededor del eje y">
-          <ellipse cx="200" cy="130" rx="150" ry="40" fill="rgba(23,128,90,.10)" stroke="#e8590c" stroke-width="4"/>
-          <line x1="200" y1="20" x2="200" y2="240" stroke="#666a70" stroke-width="1.6" stroke-dasharray="6 5"/>
-          <line x1="30" y1="130" x2="380" y2="130" stroke="#8a8f96" stroke-width="1.4"/>
-          <text x="208" y="30" font-size="13" fill="#666a70" font-family="DM Sans,sans-serif">eje de giro (y)</text>
-          <text x="270" y="152" font-size="14" fill="#141414" font-family="DM Mono,monospace">a = 100 µm</text>
-          <text x="206" y="104" font-size="14" fill="#141414" font-family="DM Mono,monospace">b = 25 µm</text>
-          <text x="40" y="190" font-size="13" fill="#e8590c" font-family="DM Sans,sans-serif" font-weight="700">curva a girar</text>
+          <ellipse cx="200" cy="130" rx="150" ry="40" fill="rgba(92,199,237,.10)" stroke="#f27389" stroke-width="4"/>
+          <line x1="200" y1="20" x2="200" y2="240" stroke="#8c99a8" stroke-width="1.6" stroke-dasharray="6 5"/>
+          <line x1="30" y1="130" x2="380" y2="130" stroke="#8c99a8" stroke-width="1.4"/>
+          <text x="208" y="30" font-size="13" fill="#8c99a8" font-family="Times New Roman, Tinos, Times, serif">eje de giro (y)</text>
+          <text x="270" y="152" font-size="14" fill="#eef2f8" font-family="Times New Roman, Tinos, Times, serif">a = 100 µm</text>
+          <text x="206" y="104" font-size="14" fill="#eef2f8" font-family="Times New Roman, Tinos, Times, serif">b = 25 µm</text>
+          <text x="40" y="190" font-size="13" fill="#f27389" font-family="Times New Roman, Tinos, Times, serif" font-weight="700">curva a girar</text>
         </svg>
         <ul class="qs">
           <li class="rv" data-at="13"><i>a)</i><span>Calcula el área S de la superficie.</span></li>
@@ -244,25 +245,25 @@ body[data-mode=viewer] #ctl.show{display:flex}
           <div class="fl">Figura 1</div>
           <div class="ft">Modelo de la capa de difusión alrededor de un sólido que se disuelve</div>
           <svg viewBox="0 0 640 260" class="figw" role="img" aria-label="Capa de difusión: concentración Cs en la superficie del sólido que baja linealmente hasta Cb al final de la capa de espesor h">
-            <rect x="150" y="40" width="150" height="190" fill="#e9f2fb"/>
-            <rect x="300" y="40" width="320" height="190" fill="#fff" stroke="#e8e8e6"/>
-            <rect x="40" y="40" width="110" height="190" rx="6" fill="#cfd3cf" stroke="#8a8f96"/>
-            <text x="95" y="130" text-anchor="middle" font-size="17" font-weight="700" fill="#141414" font-family="DM Sans,sans-serif">Sólido</text>
-            <text x="95" y="150" text-anchor="middle" font-size="14" fill="#666a70" font-family="DM Sans,sans-serif">(cristal)</text>
-            <line x1="150" y1="40" x2="150" y2="230" stroke="#8a8f96" stroke-width="2"/>
-            <line x1="300" y1="40" x2="300" y2="230" stroke="#3b82c4" stroke-width="1.5" stroke-dasharray="5 4"/>
-            <g class="rv" data-at="2"><line x1="150" y1="20" x2="300" y2="20" stroke="#141414" stroke-width="1.5"/><line x1="150" y1="14" x2="150" y2="26" stroke="#141414" stroke-width="1.5"/><line x1="300" y1="14" x2="300" y2="26" stroke="#141414" stroke-width="1.5"/><text x="225" y="13" text-anchor="middle" font-size="16" font-weight="700" fill="#141414" font-family="DM Mono,monospace">h</text></g>
-            <text x="225" y="62" text-anchor="middle" font-size="15" fill="#3b82c4" font-weight="700" font-family="DM Sans,sans-serif">capa de difusión</text>
-            <text x="460" y="62" text-anchor="middle" font-size="15" fill="#666a70" font-family="DM Sans,sans-serif">seno del líquido (agitado)</text>
-            <g class="rv" data-at="3.5"><line x1="150" y1="95" x2="620" y2="95" stroke="#e8590c" stroke-width="1" stroke-dasharray="2 4" opacity=".55"/><line x1="150" y1="190" x2="620" y2="190" stroke="#17805a" stroke-width="1" stroke-dasharray="2 4" opacity=".55"/>
-              <polyline points="150,95 300,190 620,190" fill="none" stroke="#141414" stroke-width="3" stroke-linejoin="round"/>
-              <circle cx="150" cy="95" r="5" fill="#e8590c"/><circle cx="300" cy="190" r="5" fill="#17805a"/>
-              <text x="158" y="86" font-size="16" font-weight="700" fill="#e8590c" font-family="DM Mono,monospace">Cs</text>
-              <text x="540" y="180" font-size="16" font-weight="700" fill="#17805a" font-family="DM Mono,monospace">Cb</text></g>
-            <g class="rv" data-at="5.5"><circle cx="165" cy="130" r="3" fill="#3b82c4"/><circle cx="185" cy="160" r="3" fill="#3b82c4"/><circle cx="175" cy="200" r="3" fill="#3b82c4"/><circle cx="210" cy="145" r="3" fill="#3b82c4"/><circle cx="240" cy="205" r="3" fill="#3b82c4"/><circle cx="270" cy="215" r="3" fill="#3b82c4"/><circle cx="360" cy="150" r="3" fill="#3b82c4"/><circle cx="430" cy="120" r="3" fill="#3b82c4"/><circle cx="480" cy="205" r="3" fill="#3b82c4"/><circle cx="560" cy="140" r="3" fill="#3b82c4"/><circle cx="580" cy="210" r="3" fill="#3b82c4"/>
-              <line x1="170" y1="244" x2="610" y2="244" stroke="#17805a" stroke-width="2"/><polygon points="610,244 600,239 600,249" fill="#17805a"/><text x="390" y="258" text-anchor="middle" font-size="13" fill="#17805a" font-family="DM Sans,sans-serif">las moléculas viajan hacia donde hay menos (difusión)</text></g>
+            <rect x="150" y="40" width="150" height="190" fill="#13283a"/>
+            <rect x="300" y="40" width="320" height="190" fill="#0b1321" stroke="#233046"/>
+            <rect x="40" y="40" width="110" height="190" rx="6" fill="#2b3442" stroke="#8c99a8"/>
+            <text x="95" y="130" text-anchor="middle" font-size="17" font-weight="700" fill="#eef2f8" font-family="Times New Roman, Tinos, Times, serif">Sólido</text>
+            <text x="95" y="150" text-anchor="middle" font-size="14" fill="#8c99a8" font-family="Times New Roman, Tinos, Times, serif">(cristal)</text>
+            <line x1="150" y1="40" x2="150" y2="230" stroke="#8c99a8" stroke-width="2"/>
+            <line x1="300" y1="40" x2="300" y2="230" stroke="#5cc7ed" stroke-width="1.5" stroke-dasharray="5 4"/>
+            <g class="rv" data-at="2"><line x1="150" y1="20" x2="300" y2="20" stroke="#eef2f8" stroke-width="1.5"/><line x1="150" y1="14" x2="150" y2="26" stroke="#eef2f8" stroke-width="1.5"/><line x1="300" y1="14" x2="300" y2="26" stroke="#eef2f8" stroke-width="1.5"/><text x="225" y="13" text-anchor="middle" font-size="16" font-weight="700" fill="#eef2f8" font-family="Times New Roman, Tinos, Times, serif">h</text></g>
+            <text x="225" y="62" text-anchor="middle" font-size="15" fill="#5cc7ed" font-weight="700" font-family="Times New Roman, Tinos, Times, serif">capa de difusión</text>
+            <text x="460" y="62" text-anchor="middle" font-size="15" fill="#8c99a8" font-family="Times New Roman, Tinos, Times, serif">seno del líquido (agitado)</text>
+            <g class="rv" data-at="3.5"><line x1="150" y1="95" x2="620" y2="95" stroke="#f5c45c" stroke-width="1" stroke-dasharray="2 4" opacity=".55"/><line x1="150" y1="190" x2="620" y2="190" stroke="#73d999" stroke-width="1" stroke-dasharray="2 4" opacity=".55"/>
+              <polyline points="150,95 300,190 620,190" fill="none" stroke="#eef2f8" stroke-width="3" stroke-linejoin="round"/>
+              <circle cx="150" cy="95" r="5" fill="#f5c45c"/><circle cx="300" cy="190" r="5" fill="#73d999"/>
+              <text x="158" y="86" font-size="16" font-weight="700" fill="#f5c45c" font-family="Times New Roman, Tinos, Times, serif">Cs</text>
+              <text x="540" y="180" font-size="16" font-weight="700" fill="#73d999" font-family="Times New Roman, Tinos, Times, serif">Cb</text></g>
+            <g class="rv" data-at="5.5"><circle cx="165" cy="130" r="3" fill="#5cc7ed"/><circle cx="185" cy="160" r="3" fill="#5cc7ed"/><circle cx="175" cy="200" r="3" fill="#5cc7ed"/><circle cx="210" cy="145" r="3" fill="#5cc7ed"/><circle cx="240" cy="205" r="3" fill="#5cc7ed"/><circle cx="270" cy="215" r="3" fill="#5cc7ed"/><circle cx="360" cy="150" r="3" fill="#5cc7ed"/><circle cx="430" cy="120" r="3" fill="#5cc7ed"/><circle cx="480" cy="205" r="3" fill="#5cc7ed"/><circle cx="560" cy="140" r="3" fill="#5cc7ed"/><circle cx="580" cy="210" r="3" fill="#5cc7ed"/>
+              <line x1="170" y1="244" x2="610" y2="244" stroke="#73d999" stroke-width="2"/><polygon points="610,244 600,239 600,249" fill="#73d999"/><text x="390" y="258" text-anchor="middle" font-size="13" fill="#73d999" font-family="Times New Roman, Tinos, Times, serif">las moléculas viajan hacia donde hay menos (difusión)</text></g>
           </svg>
-          <div class="fc"><i>Nota.</i> Esquema de elaboración propia, basado en la ecuación de Noyes y Whitney (1897); ver también Dokoumetzidis y Macheras (2006). Cs = concentración de saturación; Cb = concentración en el seno del líquido; h = espesor de la capa de difusión. Perfil lineal y capa uniforme supuestos.</div>
+          <div class="fc"><i>Nota.</i> Esquema de elaboración propia, basado en la ecuación de Noyes y Whitney (1897) y el modelo de capa de difusión de Nernst (1904) y Brunner (1904); ver también Dokoumetzidis y Macheras (2006). Cs = concentración de saturación; Cb = concentración en el seno del líquido; h = espesor de la capa de difusión. Perfil lineal y capa uniforme supuestos.</div>
         </div>
       </div>
       <div class="col">
@@ -270,13 +271,13 @@ body[data-mode=viewer] #ctl.show{display:flex}
         <h2 class="rv" data-at="0">Cada molécula cruza una capa quieta</h2>
         <div class="formula rv" data-at="8" style="color:var(--orange)">dm/dt = <span class="fr"><span>D · A · (C<sub>s</sub> − C<sub>b</sub>)</span><span>h</span></span></div>
         <div class="chips">
-          <div class="cp w rv" data-at="11">D<b style="font-size:.85em;font-family:'DM Sans'">qué tan rápido viajan las moléculas</b></div>
-          <div class="cp o rv" data-at="14">A<b style="font-size:.85em;font-family:'DM Sans'">área del cristal: ¡tu integral!</b></div>
-          <div class="cp w rv" data-at="17">Cs − Cb<b style="font-size:.85em;font-family:'DM Sans'">empuje: saturado vs. agua del fondo</b></div>
-          <div class="cp g rv" data-at="20">h<b style="font-size:.85em;font-family:'DM Sans'">más gruesa = más lento</b></div>
+          <div class="cp w rv" data-at="11">D<b style="font-size:.85em;font-family:'Times New Roman',Tinos,Times,serif">qué tan rápido viajan las moléculas</b></div>
+          <div class="cp o rv" data-at="14">A<b style="font-size:.85em;font-family:'Times New Roman',Tinos,Times,serif">área del cristal: ¡tu integral!</b></div>
+          <div class="cp w rv" data-at="17">Cs − Cb<b style="font-size:.85em;font-family:'Times New Roman',Tinos,Times,serif">empuje: saturado vs. agua del fondo</b></div>
+          <div class="cp g rv" data-at="20">h<b style="font-size:.85em;font-family:'Times New Roman',Tinos,Times,serif">más gruesa = más lento</b></div>
         </div>
         <div class="tip rv" data-at="23">Más área, más rápido: por eso el cálculo del área decide el tiempo de disolución.</div>
-        <div class="draft rv" data-at="26">Contenido de la figura por verificar contra las fuentes antes de entregar.</div>
+        
       </div>
     </div></section>
 
@@ -338,11 +339,12 @@ body[data-mode=viewer] #ctl.show{display:flex}
       <div class="col">
         <div class="kicker rv" data-at="18">Fuentes (APA 7)</div>
         <ul class="refs rv" data-at="18">
+          <li>Brunner, E. (1904). Reaktionsgeschwindigkeit in heterogenen Systemen. <i>Zeitschrift für Physikalische Chemie, 47</i>(1), 56-102. https://doi.org/10.1515/zpch-1904-4705</li>
           <li>Dokoumetzidis, A. y Macheras, P. (2006). A century of dissolution research: From Noyes and Whitney to the Biopharmaceutics Classification System. <i>International Journal of Pharmaceutics, 321</i>(1-2), 1-11. https://doi.org/10.1016/j.ijpharm.2006.07.011</li>
           <li>Nernst, W. (1904). Theorie der Reaktionsgeschwindigkeit in heterogenen Systemen. <i>Zeitschrift für Physikalische Chemie, 47</i>(1), 52-55. https://doi.org/10.1515/zpch-1904-4704</li>
           <li>Noyes, A. A. y Whitney, W. R. (1897). The rate of solution of solid substances in their own solutions. <i>Journal of the American Chemical Society, 19</i>, 930-934. https://doi.org/10.1021/ja02086a003</li>
         </ul>
-        <div class="draft rv" data-at="22">Brunner (1904): <span class="flag">[FUENTE POR VERIFICAR]</span>. Borrador: verifica las fuentes antes de entregar.</div>
+        <div class="draft rv" data-at="22">Figura 1: elaboración propia. D, h, Cs y ρ: valores de ejemplo.</div>
       </div>
     </div></section>
 
@@ -352,7 +354,7 @@ body[data-mode=viewer] #ctl.show{display:flex}
       <video id="vid" src="cristal_disolucion.mp4" muted playsinline preload="none" controls></video>
     </div></section>
 
-    <div id="wait"><div class="spin" id="spin"></div><b id="wtitle" style="font-family:'Fraunces',Georgia,serif;font-size:1.5em">Conectando…</b><span id="wtext" style="color:var(--muted);max-width:34ch">Esperando al expositor.</span><button id="wlocal" type="button" style="display:none">Ver por mi cuenta</button></div>
+    <div id="wait"><div class="spin" id="spin"></div><b id="wtitle" style="font-family:'Times New Roman',Tinos,Times,serif;font-size:1.5em">Conectando…</b><span id="wtext" style="color:var(--muted);max-width:34ch">Esperando al expositor.</span><button id="wlocal" type="button" style="display:none">Ver por mi cuenta</button></div>
   </main>
 
   <footer class="bottom">
@@ -385,10 +387,10 @@ function ringsArea(a,b,n){var p=ringPts(a,b,n),s=0;for(var i=0;i<n;i++)s+=PI*(p[
 var A0=100;
 
 /* ---------- 3D ---------- */
-var GREEN=[23,128,90],GREEN2=[118,190,155],ORANGE=[232,89,12],PITCH=0.42;
+var GREEN=[242,115,137],GREEN2=[245,196,92],ORANGE=[92,199,237],PITCH=0.42;
 var LV=(function(){var v=[-0.35,0.62,0.7],m=Math.hypot(v[0],v[1],v[2]);return[v[0]/m,v[1]/m,v[2]/m]})();
 function view(P,yaw){var c=Math.cos(yaw),s=Math.sin(yaw),x1=P[0]*c+P[2]*s,z1=-P[0]*s+P[2]*c,cp=Math.cos(PITCH),sp=Math.sin(PITCH);return[x1,P[1]*cp-z1*sp,P[1]*sp+z1*cp]}
-function shade(rgb,k,al){var m=0.42*k,f=0.78+0.22*k;return'rgba('+Math.round((rgb[0]+(255-rgb[0])*m)*f)+','+Math.round((rgb[1]+(255-rgb[1])*m)*f)+','+Math.round((rgb[2]+(255-rgb[2])*m)*f)+','+al+')'}
+function shade(rgb,k,al){var m=0.16*k,f=0.78+0.22*k;return'rgba('+Math.round((rgb[0]+(255-rgb[0])*m)*f)+','+Math.round((rgb[1]+(255-rgb[1])*m)*f)+','+Math.round((rgb[2]+(255-rgb[2])*m)*f)+','+al+')'}
 function PP(t,ph,b){return[Math.cos(t)*Math.cos(ph),b*Math.sin(t),Math.cos(t)*Math.sin(ph)]}
 function draw3D(canvas,o){
   var r=canvas.getBoundingClientRect();if(!r.width)return;
@@ -418,15 +420,15 @@ function draw3D(canvas,o){
   ctx.lineWidth=0.7;
   polys.forEach(function(p){ctx.beginPath();ctx.moveTo(p.pts[0][0],p.pts[0][1]);for(var i=1;i<4;i++)ctx.lineTo(p.pts[i][0],p.pts[i][1]);ctx.closePath();ctx.fillStyle=p.fill;ctx.fill();ctx.strokeStyle=p.stroke;ctx.stroke()});
   var ext=Math.max(bn,0.22)+0.4,e0=scr(view([0,-ext,0],yaw)),e1=scr(view([0,ext,0],yaw));
-  ctx.save();ctx.setLineDash([5,5]);ctx.strokeStyle='#666a70';ctx.lineWidth=1.3;ctx.beginPath();ctx.moveTo(e0[0],e0[1]);ctx.lineTo(e1[0],e1[1]);ctx.stroke();ctx.restore();
-  ctx.fillStyle='#666a70';ctx.font='12px "DM Mono", monospace';ctx.fillText('eje de giro',Math.min(e1[0]+6,W-84),e1[1]+4);
+  ctx.save();ctx.setLineDash([5,5]);ctx.strokeStyle='#8c99a8';ctx.lineWidth=1.3;ctx.beginPath();ctx.moveTo(e0[0],e0[1]);ctx.lineTo(e1[0],e1[1]);ctx.stroke();ctx.restore();
+  ctx.fillStyle='#8c99a8';ctx.font='12px "Times New Roman", Tinos, serif';ctx.fillText('eje de giro',Math.min(e1[0]+6,W-84),e1[1]+4);
   if(o.mode==='sweep'){
-    var ph=o.phi*PI/180;ctx.strokeStyle='#e8590c';ctx.lineWidth=3.2;ctx.lineCap='round';ctx.beginPath();
+    var ph=o.phi*PI/180;ctx.strokeStyle='#f5c45c';ctx.lineWidth=3.2;ctx.lineCap='round';ctx.beginPath();
     for(var k2=0;k2<=60;k2++){var s2=scr(view(PP(-PI/2+PI*k2/60,ph,bn),yaw));if(k2)ctx.lineTo(s2[0],s2[1]);else ctx.moveTo(s2[0],s2[1])}
     ctx.stroke();
-    var lab=scr(view(PP(0.9,ph,bn),yaw));ctx.font='600 13px "DM Sans", sans-serif';
+    var lab=scr(view(PP(0.9,ph,bn),yaw));ctx.font='600 13px "Times New Roman", Tinos, serif';
     var lx=Math.min(lab[0]+10,W-118),ly=Math.max(lab[1]-12,16);
-    ctx.lineWidth=4;ctx.strokeStyle='rgba(255,255,255,.92)';ctx.lineJoin='round';ctx.strokeText('curva generatriz',lx,ly);ctx.fillStyle='#e8590c';ctx.fillText('curva generatriz',lx,ly);
+    ctx.lineWidth=4;ctx.strokeStyle='rgba(11,19,33,.92)';ctx.lineJoin='round';ctx.strokeText('curva generatriz',lx,ly);ctx.fillStyle='#f5c45c';ctx.fillText('curva generatriz',lx,ly);
   }
 }
 var lastSig={};
@@ -446,7 +448,7 @@ function r3(t){
   var S=Sfull(A0,b),c=Math.sqrt(Math.max(A0*A0-b*b,0)),two=2*PI*A0*A0,sph=4*PI*A0*A0,r0=Math.cbrt(A0*A0*b),Ss=4*PI*r0*r0;
   $('v30').textContent=fm(two,0)+' µm²';$('v31').textContent=fm(S,0)+' µm²';$('v32').textContent=fm(sph,0)+' µm²';
   $('f30').style.width=(two/sph*100)+'%';$('f31').style.width=(S/sph*100)+'%';$('f32').style.width='100%';
-  $('live3').innerHTML=c<1e-3?'b = a → c = 0 → esfera: S = 4πa² = '+fm(sph,0)+' µm²':'c = '+fx(c,2)+' → S = '+fm(2*PI*A0*A0,0)+' + '+fm(2*PI*A0*b*b/c*Math.log((A0+c)/b),0)+' = <b style="color:#e8590c">'+fm(S,0)+' µm²</b>';
+  $('live3').innerHTML=c<1e-3?'b = a → c = 0 → esfera: S = 4πa² = '+fm(sph,0)+' µm²':'c = '+fx(c,2)+' → S = '+fm(2*PI*A0*A0,0)+' + '+fm(2*PI*A0*b*b/c*Math.log((A0+c)/b),0)+' = <b style="color:#f27389">'+fm(S,0)+' µm²</b>';
   var cap=stp(t,[[0,'La curva naranja gira alrededor del eje y va pintando el cristal.'],[8,'Ahora cambiamos el semi-espesor b: de plaqueta fina a esfera.'],[21,'Tu cristal: '+fx((S/Ss-1)*100,0)+' % más área que una esfera del mismo volumen.']]);
   if($('cap3').textContent!==cap)$('cap3').textContent=cap;
 }
@@ -454,9 +456,9 @@ function strip(n,sel,b){
   var p=ringPts(A0,b,n),A=p[sel],B=p[sel+1],xm=(A[0]+B[0])/2,ds=Math.hypot(B[0]-A[0],B[1]-A[1]),len=2*PI*xm,area=len*ds;
   var k=540/(2*PI*A0),w=Math.max(2,len*k),h=Math.max(3,Math.min(46,ds*k)),x0=30,y0=34;
   $('strip').setAttribute('viewBox','0 0 600 '+(y0+h+50));
-  $('strip').innerHTML='<rect x="'+x0+'" y="'+y0+'" width="'+(2*PI*A0*k)+'" height="'+h+'" fill="none" stroke="#e8e8e6" stroke-dasharray="4 4"/><rect x="'+x0+'" y="'+y0+'" width="'+w+'" height="'+h+'" fill="rgba(232,89,12,.18)" stroke="#e8590c" stroke-width="1.5"/>'+
-  '<text x="'+x0+'" y="'+(y0-10)+'" font-size="14" fill="#141414" font-family="DM Sans, sans-serif">Anillo '+(sel+1)+' desenrollado: largo 2π·x = '+fx(len,1)+' µm</text>'+
-  '<text x="'+x0+'" y="'+(y0+h+22)+'" font-size="14" fill="#666a70" font-family="DM Sans, sans-serif">ancho ds = '+fx(ds,1)+' µm → área ≈ '+fm(area,0)+' µm²</text>';
+  $('strip').innerHTML='<rect x="'+x0+'" y="'+y0+'" width="'+(2*PI*A0*k)+'" height="'+h+'" fill="none" stroke="#233046" stroke-dasharray="4 4"/><rect x="'+x0+'" y="'+y0+'" width="'+w+'" height="'+h+'" fill="rgba(242,115,137,.18)" stroke="#f27389" stroke-width="1.5"/>'+
+  '<text x="'+x0+'" y="'+(y0-10)+'" font-size="14" fill="#eef2f8" font-family="Times New Roman, Tinos, Times, serif">Anillo '+(sel+1)+' desenrollado: largo 2π·x = '+fx(len,1)+' µm</text>'+
+  '<text x="'+x0+'" y="'+(y0+h+22)+'" font-size="14" fill="#8c99a8" font-family="Times New Roman, Tinos, Times, serif">ancho ds = '+fx(ds,1)+' µm → área ≈ '+fm(area,0)+' µm²</text>';
 }
 function r4(t){
   var n=stp(t,[[0,5],[6,8],[8.8,10],[11.6,15],[14.4,20],[17.2,30],[20,50],[22.8,100]]);
@@ -490,18 +492,18 @@ function drawDiss(canvas,o){
   var a=o.a,b=o.b,h=o.h,r0=o.r0,s1=o.s1,s2=o.s2;
   var k=(W/4*0.94)/(A0+60),cy=H*0.54,c1=W*0.25,c2=W*0.75;
   function shape(cx,rx,ry,s,col,label,mass){
-    ctx.beginPath();ctx.save();ctx.setLineDash([4,4]);ctx.strokeStyle='#b8bcc0';ctx.lineWidth=1;ctx.ellipse(cx,cy,rx*k,Math.max(ry*k,0.5),0,0,2*PI);ctx.stroke();ctx.restore();
+    ctx.beginPath();ctx.save();ctx.setLineDash([4,4]);ctx.strokeStyle='#4a5668';ctx.lineWidth=1;ctx.ellipse(cx,cy,rx*k,Math.max(ry*k,0.5),0,0,2*PI);ctx.stroke();ctx.restore();
     if(s>0.004){
       ctx.beginPath();ctx.ellipse(cx,cy,rx*s*k,Math.max(ry*s*k,0.5),0,0,2*PI);
-      ctx.save();ctx.strokeStyle='rgba(59,130,196,.22)';ctx.lineWidth=2*h*k;ctx.stroke();ctx.restore();
-      ctx.fillStyle=col;ctx.fill();ctx.strokeStyle='rgba(20,20,20,.55)';ctx.lineWidth=1.2;ctx.stroke();
+      ctx.save();ctx.strokeStyle='rgba(92,199,237,.22)';ctx.lineWidth=2*h*k;ctx.stroke();ctx.restore();
+      ctx.fillStyle=col;ctx.fill();ctx.strokeStyle='rgba(238,242,248,.5)';ctx.lineWidth=1.2;ctx.stroke();
     }
-    ctx.textAlign='center';ctx.fillStyle='#141414';ctx.font='600 '+Math.max(11,W/46)+'px "DM Sans", sans-serif';ctx.fillText(label,cx,H*0.09);
-    ctx.fillStyle='#666a70';ctx.font=Math.max(10,W/52)+'px "DM Mono", monospace';ctx.fillText(s>0.004?('queda '+Math.round(mass*100)+' %'):'disuelto ✓',cx,H*0.96);ctx.textAlign='left';
+    ctx.textAlign='center';ctx.fillStyle='#eef2f8';ctx.font='600 '+Math.max(11,W/46)+'px "Times New Roman", Tinos, serif';ctx.fillText(label,cx,H*0.09);
+    ctx.fillStyle='#8c99a8';ctx.font=Math.max(10,W/52)+'px "Times New Roman", Tinos, serif';ctx.fillText(s>0.004?('queda '+Math.round(mass*100)+' %'):'disuelto ✓',cx,H*0.96);ctx.textAlign='left';
   }
-  shape(c1,a,b,s1,'rgba(232,89,12,.85)','Tu cristal',s1*s1*s1);
-  shape(c2,r0,r0,s2,'rgba(23,128,90,.85)','Esfera, mismo volumen',s2*s2*s2);
-  if(s1>0.08){var xe=c1+a*s1*k;ctx.strokeStyle='#3b82c4';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(xe,cy);ctx.lineTo(xe+h*k,cy);ctx.moveTo(xe,cy-5);ctx.lineTo(xe,cy+5);ctx.moveTo(xe+h*k,cy-5);ctx.lineTo(xe+h*k,cy+5);ctx.stroke();ctx.fillStyle='#3b82c4';ctx.font='700 12px "DM Mono", monospace';ctx.textAlign='center';ctx.fillText('h',xe+h*k/2,cy-9);ctx.textAlign='left'}
+  shape(c1,a,b,s1,'rgba(242,115,137,.85)','Tu cristal',s1*s1*s1);
+  shape(c2,r0,r0,s2,'rgba(92,199,237,.85)','Esfera, mismo volumen',s2*s2*s2);
+  if(s1>0.08){var xe=c1+a*s1*k;ctx.strokeStyle='#5cc7ed';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(xe,cy);ctx.lineTo(xe+h*k,cy);ctx.moveTo(xe,cy-5);ctx.lineTo(xe,cy+5);ctx.moveTo(xe+h*k,cy-5);ctx.lineTo(xe+h*k,cy+5);ctx.stroke();ctx.fillStyle='#5cc7ed';ctx.font='700 12px "Times New Roman", Tinos, serif';ctx.textAlign='center';ctx.fillText('h',xe+h*k/2,cy-9);ctx.textAlign='left'}
 }
 function r7(t){
   var b,h,f;
@@ -513,8 +515,8 @@ function r7(t){
   if(r7.sig!==sig){r7.sig=sig;drawDiss($('cv3'),{a:A0,b:b,h:h,r0:R.r0,s1:s1,s2:s2});
     $('m1').textContent=Math.round(s1*s1*s1*100)+' %';$('m2').textContent=Math.round(s2*s2*s2*100)+' %';$('tt').textContent=fx(tt/60,0)+' min';
     $('i7b').textContent=fx(b,1);$('i7h').textContent=fx(h,0);
-    $('t7').innerHTML='<tr><td>Área S</td><td class="n"><b style="color:#e8590c">'+fm(R.S1*1e12,0)+' µm²</b></td><td class="n">'+fm(R.S2*1e12,0)+' µm²</td></tr>'+
-      '<tr><td>dm/dt inicial</td><td class="n"><b style="color:#e8590c">'+fx(R.R1*1e12,3)+' ng/s</b></td><td class="n">'+fx(R.R2*1e12,3)+' ng/s</td></tr>'+
+    $('t7').innerHTML='<tr><td>Área S</td><td class="n"><b style="color:#f27389">'+fm(R.S1*1e12,0)+' µm²</b></td><td class="n">'+fm(R.S2*1e12,0)+' µm²</td></tr>'+
+      '<tr><td>dm/dt inicial</td><td class="n"><b style="color:#f27389">'+fx(R.R1*1e12,3)+' ng/s</b></td><td class="n">'+fx(R.R2*1e12,3)+' ng/s</td></tr>'+
       '<tr><td>Tiempo total T</td><td class="n"><b>'+fx(R.T1/60,0)+' min</b></td><td class="n">'+fx(R.T2/60,0)+' min</td></tr>';
     $('b7').textContent=fx(R.S1/R.S2,2)+'×';}
   $('c7b').classList.toggle('act',t>=14&&t<22.5);$('c7h').classList.toggle('act',t>=22.5);
@@ -532,16 +534,16 @@ function r8(t){
   $('s8').value=v;$('v8q').textContent=fx(q,3);
   $('q8ab').textContent=fx(a,1)+' / '+fx(b,1)+' µm';$('q8r').textContent=fx(rt,2)+'×';$('q8v').textContent=rt>=1.005?('+'+fx((rt-1)*100,0)+' %'):'igual';
   var k=0.55,cx=300,cy=75;
-  $('qshape').innerHTML='<circle cx="'+cx+'" cy="'+cy+'" r="'+(R0*k)+'" fill="none" stroke="#8a8f96" stroke-dasharray="5 4" stroke-width="1.5"/><ellipse cx="'+cx+'" cy="'+cy+'" rx="'+(a*k)+'" ry="'+Math.max(b*k,0.8)+'" fill="rgba(232,89,12,.8)" stroke="#e8590c" stroke-width="1.5"/><text x="12" y="20" font-size="13" fill="#666a70" font-family="DM Sans, sans-serif">Corte del cristal (naranja) frente a la esfera de igual volumen (punteada)</text>';
+  $('qshape').innerHTML='<circle cx="'+cx+'" cy="'+cy+'" r="'+(R0*k)+'" fill="none" stroke="#8c99a8" stroke-dasharray="5 4" stroke-width="1.5"/><ellipse cx="'+cx+'" cy="'+cy+'" rx="'+(a*k)+'" ry="'+Math.max(b*k,0.8)+'" fill="rgba(242,115,137,.8)" stroke="#f27389" stroke-width="1.5"/><text x="12" y="20" font-size="13" fill="#8c99a8" font-family="Times New Roman, Tinos, Times, serif">Corte del cristal (rosado) frente a la esfera de igual volumen (punteada)</text>';
   var x0=50,x1=580,y0=225,y1=20,YM=7;
   function X(qq){return x0+(-Math.log10(qq)/1.699)*(x1-x0)}function Y(r){return y0-(r/YM)*(y0-y1)}
-  var g='<line x1="'+x0+'" y1="'+y0+'" x2="'+x1+'" y2="'+y0+'" stroke="#8a8f96"/><line x1="'+x0+'" y1="'+y0+'" x2="'+x0+'" y2="'+y1+'" stroke="#8a8f96"/>';
-  for(var yy=1;yy<=7;yy++)g+='<line x1="'+x0+'" y1="'+Y(yy)+'" x2="'+x1+'" y2="'+Y(yy)+'" stroke="#e8e8e6"/><text x="'+(x0-8)+'" y="'+(Y(yy)+4)+'" text-anchor="end" font-size="14" fill="#666a70" font-family="DM Mono, monospace">'+yy+'</text>';
-  [1,0.5,0.25,0.1,0.05,0.02].forEach(function(qq){g+='<line x1="'+X(qq)+'" y1="'+y0+'" x2="'+X(qq)+'" y2="'+(y0+5)+'" stroke="#8a8f96"/><text x="'+X(qq)+'" y="'+(y0+18)+'" text-anchor="middle" font-size="14" fill="#666a70" font-family="DM Mono, monospace">'+qq+'</text>'});
+  var g='<line x1="'+x0+'" y1="'+y0+'" x2="'+x1+'" y2="'+y0+'" stroke="#8c99a8"/><line x1="'+x0+'" y1="'+y0+'" x2="'+x0+'" y2="'+y1+'" stroke="#8c99a8"/>';
+  for(var yy=1;yy<=7;yy++)g+='<line x1="'+x0+'" y1="'+Y(yy)+'" x2="'+x1+'" y2="'+Y(yy)+'" stroke="#233046"/><text x="'+(x0-8)+'" y="'+(Y(yy)+4)+'" text-anchor="end" font-size="14" fill="#8c99a8" font-family="Times New Roman, Tinos, Times, serif">'+yy+'</text>';
+  [1,0.5,0.25,0.1,0.05,0.02].forEach(function(qq){g+='<line x1="'+X(qq)+'" y1="'+y0+'" x2="'+X(qq)+'" y2="'+(y0+5)+'" stroke="#8c99a8"/><text x="'+X(qq)+'" y="'+(y0+18)+'" text-anchor="middle" font-size="14" fill="#8c99a8" font-family="Times New Roman, Tinos, Times, serif">'+qq+'</text>'});
   var pts=[];for(var i=0;i<=120;i++){var qq=Math.pow(10,-1.699*i/120);pts.push(X(qq).toFixed(1)+','+Y(ratioQ(qq)).toFixed(1))}
-  g+='<line x1="'+x0+'" y1="'+Y(1)+'" x2="'+x1+'" y2="'+Y(1)+'" stroke="#17805a" stroke-dasharray="5 4"/><text x="'+(x1-4)+'" y="'+(Y(1)-6)+'" text-anchor="end" font-size="14" fill="#17805a" font-family="DM Sans, sans-serif">esfera = 1</text>';
-  g+='<polyline points="'+pts.join(' ')+'" fill="none" stroke="#141414" stroke-width="2.5"/><circle cx="'+X(q)+'" cy="'+Y(rt)+'" r="6" fill="#e8590c" stroke="#fff" stroke-width="2"/>';
-  g+='<text x="'+((x0+x1)/2)+'" y="264" text-anchor="middle" font-size="14" fill="#666a70" font-family="DM Sans, sans-serif">q = b/a (más aplastado →)</text>';
+  g+='<line x1="'+x0+'" y1="'+Y(1)+'" x2="'+x1+'" y2="'+Y(1)+'" stroke="#5cc7ed" stroke-dasharray="5 4"/><text x="'+(x1-4)+'" y="'+(Y(1)-6)+'" text-anchor="end" font-size="14" fill="#5cc7ed" font-family="Times New Roman, Tinos, Times, serif">esfera = 1</text>';
+  g+='<polyline points="'+pts.join(' ')+'" fill="none" stroke="#eef2f8" stroke-width="2.5"/><circle cx="'+X(q)+'" cy="'+Y(rt)+'" r="6" fill="#f27389" stroke="#0b1321" stroke-width="2"/>';
+  g+='<text x="'+((x0+x1)/2)+'" y="264" text-anchor="middle" font-size="14" fill="#8c99a8" font-family="Times New Roman, Tinos, Times, serif">q = b/a (más aplastado →)</text>';
   $('qchart').innerHTML=g;
   var cap=q>0.97?'q = 1: la esfera, la forma de menor área para ese volumen.':(q<0.07?'Plaqueta fina: '+fx(rt,1)+' veces el área de la esfera. Por eso se muelen los fármacos.':'Aplastar el cristal sin cambiar su volumen hace crecer el área.');
   if($('cap8').textContent!==cap)$('cap8').textContent=cap;
