@@ -1,0 +1,553 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tapa elíptica 2:1 · Exposición</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=DM+Sans:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme:light;
+  --bg:#ffffff; --fg:#141414; --muted:#666a70; --line:#e8e8e6; --soft:#f6f6f4;
+  --accent:#17805a; --accent-soft:#eaf6f0; --tip:#fff4ea; --orange:#e8590c; --grey:#8a8f96;
+  --bad:#c0392b;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--fg);font-family:'DM Sans',system-ui,sans-serif;font-size:clamp(15px,1.55vw,21px);line-height:1.5;overflow:hidden}
+h1,h2{font-family:'Fraunces',Georgia,serif;font-weight:500;line-height:1.12;margin:0;text-wrap:balance}
+h1{font-size:clamp(1.9rem,4.4vw,3.5rem);letter-spacing:-.01em}
+h2{font-size:clamp(1.5rem,3vw,2.3rem)}
+p{margin:0}
+#app{position:fixed;inset:0;display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0)}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px clamp(14px,3vw,36px);border-bottom:1px solid var(--line);font-size:.72em;color:var(--muted);flex:none}
+.brand{letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--orange)}
+.chip{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:999px;padding:4px 12px;background:var(--bg);color:var(--fg);font:inherit;font-size:1em;cursor:default}
+button.chip{cursor:pointer}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--grey)}
+.live .dot{background:#d9261c;animation:pulse 1.4s infinite}
+@keyframes pulse{50%{opacity:.35}}
+#stage{position:relative;flex:1;min-height:0}
+.slide{position:absolute;inset:0;display:none;overflow:auto;padding:clamp(14px,2.6vw,40px) clamp(16px,4.5vw,64px)}
+.slide.on{display:block}
+.grid{display:grid;grid-template-columns:minmax(0,1.02fr) minmax(0,1fr);gap:clamp(18px,3.5vw,52px);align-items:center;min-height:100%;max-width:1400px;margin:0 auto}
+.col{display:flex;flex-direction:column;gap:clamp(10px,1.6vw,20px);min-width:0}
+@media (max-width:860px),(orientation:portrait){.grid{grid-template-columns:minmax(0,1fr);align-content:start}}
+.kicker{font-size:.72em;letter-spacing:.16em;text-transform:uppercase;color:var(--orange);font-weight:700}
+.lead{color:var(--muted);font-size:1.08em;max-width:46ch}
+.rv{opacity:0;transform:translateY(10px);transition:opacity .55s ease,transform .55s ease}
+.rv.in{opacity:1;transform:none}
+.formula{font-family:'Fraunces',Georgia,serif;font-size:1.12em;text-align:center;padding:.6em .7em;background:var(--soft);border:1px solid var(--line);border-radius:10px;overflow-x:auto;white-space:nowrap}
+.fr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 .15em;font-size:.92em}
+.fr>span:first-child{border-bottom:1.5px solid currentColor;padding:0 .3em .05em}
+.fr>span:last-child{padding:.05em .3em 0}
+.ov{border-top:1.5px solid currentColor;padding-top:1px}
+.chips{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px}
+.cp{border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:8px;padding:6px 10px;font-size:.8em;color:var(--muted)}
+.cp b{display:block;color:var(--fg);font-family:'DM Mono',monospace;font-size:1.1em;font-weight:500}
+.cp.o{border-left-color:var(--orange)} .cp.g{border-left-color:var(--grey)}
+.qs{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px}
+.qs li{display:flex;gap:10px;align-items:baseline}
+.qs li i{font-style:normal;font-weight:700;color:var(--accent);min-width:1.3em}
+.tip{background:var(--tip);border-left:3px solid var(--orange);border-radius:6px;padding:.6em .9em;font-size:.9em}
+.cv{width:100%;max-width:min(100%,62vh);aspect-ratio:1/1;background:var(--soft);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin:0 auto}
+.cv canvas{width:100%;height:100%;display:block}
+.ctrl{display:flex;flex-direction:column;gap:4px;font-size:.85em;color:var(--muted);padding:6px 8px;border-radius:10px;border:1px solid transparent;transition:border-color .3s,background .3s}
+.ctrl.act{border-color:var(--accent);background:var(--accent-soft)}
+.ctrl b{color:var(--fg);font-family:'DM Mono',monospace;font-weight:500}
+input[type=range]{width:100%;accent-color:var(--accent);pointer-events:none}
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+.pb{font:inherit;font-size:.85em;border:1px solid var(--accent);background:transparent;color:var(--accent);padding:5px 14px;border-radius:999px;font-weight:500;transition:all .25s;pointer-events:none}
+.pb.press{background:var(--accent);color:#fff;transform:scale(1.07);box-shadow:0 0 0 4px rgba(23,128,90,.22)}
+.live2{font-family:'DM Mono',monospace;font-size:.76em;background:var(--soft);border:1px solid var(--line);border-radius:8px;padding:8px 10px;overflow-x:auto;white-space:nowrap}
+.bars{display:flex;flex-direction:column;gap:6px}
+.bar{display:grid;grid-template-columns:92px 1fr 78px;gap:8px;align-items:center;font-size:.82em}
+.bar .tr{height:12px;background:var(--soft);border-radius:999px;overflow:hidden;border:1px solid var(--line)}
+.bar .fl{height:100%;border-radius:999px}
+.bar .v{text-align:right;font-family:'DM Mono',monospace}
+svg{display:block;width:100%;height:auto;max-width:100%}
+.fig{max-height:30vh;width:auto;margin:0 auto}
+.caption{font-family:'Fraunces',Georgia,serif;font-size:1.15em;min-height:2.4em}
+.steps{display:flex;flex-direction:column;gap:6px;max-width:1100px;margin:0 auto}
+.st{display:grid;grid-template-columns:2.1em minmax(0,1fr);gap:12px;align-items:center;padding:5px 12px;border:1px solid var(--line);border-radius:12px;transition:border-color .4s,background .4s,opacity .5s,transform .5s}
+.st.cur{border-color:var(--accent);background:var(--accent-soft)}
+.st .n{width:1.9em;height:1.9em;border-radius:50%;border:1.5px solid var(--accent);color:var(--accent);display:grid;place-items:center;font-weight:700;font-size:.85em}
+.st>div{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,2.3fr);gap:12px;align-items:center;min-width:0}
+.st h3{margin:0;font-size:.8em;color:var(--muted);font-weight:500}
+@media (max-width:860px),(orientation:portrait){.st>div{grid-template-columns:minmax(0,1fr);gap:2px}}
+.st .f{font-family:'Fraunces',Georgia,serif;font-size:.98em;overflow-x:auto;white-space:nowrap}
+.st.fin .f{color:var(--orange);font-weight:700}
+table{border-collapse:collapse;width:100%;font-size:.9em}
+td,th{padding:7px 8px;text-align:left;border-bottom:1px solid var(--line)}
+th{font-weight:500;color:var(--muted)}
+td.n{font-family:'DM Mono',monospace;text-align:right;font-variant-numeric:tabular-nums}
+.inp{font-family:'DM Mono',monospace;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);font-size:.95em}
+.big{font-family:'Fraunces',Georgia,serif;font-size:2.4em;color:var(--orange);font-weight:700;line-height:1.1}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.card{border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:4px}
+.card b{font-family:'Fraunces',Georgia,serif;font-size:1.15em}
+.qrcard{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;padding:clamp(14px,2vw,26px);border:1px solid var(--line);border-radius:18px;background:var(--bg);max-width:380px;margin:0 auto}
+.qrcard svg{width:min(60vw,280px,34vh);height:auto}
+.qrcard code{font-family:'DM Mono',monospace;font-size:.62em;color:var(--muted);word-break:break-all}
+.vid{display:flex;flex-direction:column;align-items:center;gap:12px}
+.vid video{height:min(70vh,calc(100vh - 220px));max-width:100%;border-radius:12px;background:#0a1220;aspect-ratio:9/16}
+.bottom{flex:none;border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0)}
+#pbar{height:4px;background:var(--line)} #pfill{height:100%;width:0;background:var(--accent)}
+#ctl{display:flex;justify-content:center;align-items:center;gap:10px;padding:8px 12px;flex-wrap:wrap}
+#ctl button{font:inherit;font-size:.85em;border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:999px;padding:6px 16px;cursor:pointer}
+#ctl button.go{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:700;animation:glow 1.6s infinite}
+@keyframes glow{50%{box-shadow:0 0 0 7px rgba(23,128,90,.2)}}
+body[data-mode=viewer] #ctl{display:none}
+body[data-mode=viewer] #ctl.show{display:flex}
+#wait{position:absolute;inset:0;z-index:5;background:var(--bg);display:none;flex-direction:column;justify-content:center;align-items:center;gap:14px;text-align:center;padding:24px}
+#wait.on{display:flex}
+#wait button{font:inherit;border:1px solid var(--accent);background:var(--accent);color:#fff;padding:9px 20px;border-radius:999px;font-weight:700;cursor:pointer}
+.spin{width:34px;height:34px;border-radius:50%;border:4px solid var(--line);border-top-color:var(--accent);animation:sp 1s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.rv,.st{transition:none}.spin,.live .dot,#ctl button.go{animation:none}}
+@media (orientation:portrait){.cv{max-width:min(100%,34vh)}.fig{max-height:24vh}}
+</style>
+</head>
+<body data-mode="viewer">
+<div id="app">
+  <header class="top">
+    <span class="brand">Cálculo II · FQIQ · UNMSM</span>
+    <span style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end">
+      <span id="counter" class="chip" style="display:none"></span>
+      <button id="status" class="chip" type="button"></button>
+    </span>
+  </header>
+
+  <main id="stage">
+    <!-- 1 PORTADA -->
+    <section class="slide"><div class="grid">
+      <div class="col">
+        <div class="kicker rv" data-at="0">Cálculo II · Área de superficie de revolución</div>
+        <h1 class="rv" data-at="0.6">¿Cuánto acero lleva la tapa de un reactor?</h1>
+        <p class="lead rv" data-at="1.6">Una integral que mide la superficie de una tapa elíptica 2:1, la más usada en tanques y reactores químicos.</p>
+        <p class="lead rv" data-at="3" style="font-size:.9em">Facultad de Química e Ingeniería Química · UNMSM</p>
+      </div>
+      <div class="qrcard rv" data-at="1.2">
+        <div id="qr"><svg role="img" aria-label="Código QR de la presentación" width="410" height="410" class="segno"><g transform="scale(10)"><path fill="#fff" d="M0 0h41v41h-41z"/><path class="qrline" stroke="#141414" d="M2 2.5h7m8 0h2m1 0h1m1 0h1m1 0h1m1 0h1m3 0h1m1 0h7m-37 1h1m5 0h1m2 0h7m3 0h1m1 0h1m3 0h1m1 0h2m1 0h1m5 0h1m-37 1h1m1 0h3m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h5m1 0h1m1 0h1m1 0h1m1 0h1m1 0h3m1 0h1m-37 1h1m1 0h3m1 0h1m1 0h4m5 0h1m1 0h2m1 0h1m1 0h3m1 0h1m1 0h1m1 0h3m1 0h1m-37 1h1m1 0h3m1 0h1m1 0h3m5 0h1m1 0h1m1 0h1m1 0h2m1 0h2m1 0h1m1 0h1m1 0h3m1 0h1m-37 1h1m5 0h1m1 0h1m3 0h1m1 0h2m2 0h1m1 0h1m1 0h1m2 0h4m1 0h1m5 0h1m-37 1h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7m-29 1h1m1 0h2m7 0h2m2 0h1m4 0h1m-29 1h1m1 0h5m6 0h1m1 0h1m2 0h5m1 0h2m4 0h5m-35 1h1m1 0h2m4 0h4m1 0h1m1 0h2m4 0h1m6 0h1m2 0h1m2 0h2m-36 1h1m2 0h1m2 0h2m2 0h1m3 0h1m3 0h1m1 0h5m1 0h4m1 0h3m1 0h2m-37 1h1m6 0h1m1 0h4m1 0h1m1 0h1m4 0h1m1 0h1m2 0h2m1 0h2m5 0h1m-37 1h4m2 0h1m1 0h1m4 0h2m2 0h1m4 0h5m2 0h2m1 0h5m-37 1h1m1 0h2m3 0h1m1 0h3m2 0h1m1 0h2m1 0h1m1 0h1m1 0h1m1 0h2m1 0h1m2 0h1m-31 1h3m1 0h2m2 0h4m1 0h4m2 0h2m2 0h4m1 0h5m1 0h2m-37 1h2m2 0h1m3 0h1m3 0h1m2 0h1m1 0h7m5 0h4m2 0h2m-36 1h4m1 0h2m2 0h1m1 0h1m1 0h3m2 0h1m1 0h1m1 0h5m1 0h4m1 0h3m-36 1h1m5 0h1m2 0h1m2 0h1m1 0h1m2 0h1m1 0h1m1 0h1m1 0h1m3 0h1m2 0h1m2 0h2m-36 1h1m2 0h1m2 0h2m1 0h4m2 0h5m1 0h1m2 0h1m2 0h2m1 0h2m2 0h3m-36 1h1m5 0h1m1 0h2m1 0h4m2 0h4m2 0h1m4 0h3m1 0h1m2 0h1m-37 1h2m2 0h4m5 0h3m1 0h1m1 0h1m2 0h1m1 0h7m1 0h3m-35 1h2m1 0h2m4 0h2m1 0h1m1 0h1m1 0h1m1 0h3m1 0h5m1 0h1m4 0h1m1 0h1m-36 1h2m1 0h2m1 0h2m3 0h1m1 0h1m1 0h2m1 0h1m1 0h1m1 0h1m1 0h1m2 0h1m1 0h1m1 0h3m1 0h2m-36 1h1m5 0h1m3 0h1m1 0h2m9 0h1m2 0h2m2 0h2m2 0h1m-32 1h3m1 0h2m1 0h1m1 0h3m2 0h5m1 0h4m1 0h2m1 0h1m1 0h1m1 0h1m-37 1h3m2 0h1m1 0h1m2 0h2m2 0h3m4 0h1m2 0h1m1 0h1m1 0h2m1 0h1m2 0h1m-35 1h1m5 0h1m5 0h1m7 0h3m1 0h2m1 0h4m1 0h1m1 0h3m-37 1h1m1 0h1m1 0h2m2 0h1m1 0h2m1 0h2m1 0h1m4 0h2m4 0h1m1 0h2m5 0h1m-37 1h1m1 0h1m1 0h4m5 0h1m3 0h1m4 0h2m1 0h8m1 0h1m1 0h1m-29 1h2m2 0h1m3 0h6m1 0h2m3 0h1m3 0h2m-34 1h7m2 0h1m1 0h1m1 0h5m3 0h1m4 0h1m1 0h1m1 0h1m1 0h1m1 0h3m-37 1h1m5 0h1m1 0h15m5 0h1m3 0h2m2 0h1m-37 1h1m1 0h3m1 0h1m1 0h1m1 0h1m5 0h1m2 0h1m1 0h1m1 0h10m1 0h2m-36 1h1m1 0h3m1 0h1m1 0h1m2 0h5m2 0h1m1 0h4m4 0h3m1 0h2m2 0h1m-37 1h1m1 0h3m1 0h1m1 0h1m2 0h1m3 0h2m1 0h2m6 0h2m1 0h1m3 0h1m1 0h2m-37 1h1m5 0h1m3 0h1m1 0h1m1 0h2m3 0h3m4 0h5m1 0h1m3 0h1m-37 1h7m1 0h1m1 0h3m2 0h1m1 0h3m3 0h4m3 0h1m1 0h1m1 0h3"/></g></svg></div>
+        <b>Sigue la exposición en vivo</b>
+        <span style="font-size:.8em;color:var(--muted)">Escanea con la cámara de tu celular. La presentación avanza sola, al ritmo del expositor.</span>
+        <code>https://maestrosuprem0.github.io/Tarea-calculo/presentacion.html</code>
+      </div>
+    </div></section>
+
+    <!-- 2 PROBLEMA -->
+    <section class="slide"><div class="grid">
+      <div class="col">
+        <div class="kicker rv" data-at="0">El problema</div>
+        <h2 class="rv" data-at="0">Una tapa que nace de girar una elipse</h2>
+        <p class="rv" data-at="1">Un reactor cilíndrico de acero inoxidable, de <b>D = 2.0 m</b>, se cierra con tapas elípticas <b>2:1</b> (profundidad = D/4). La tapa sale de girar, alrededor del eje del reactor, el arco de la elipse:</p>
+        <div class="formula rv" data-at="2"><span class="fr"><span>x²</span><span>1²</span></span> + <span class="fr"><span>y²</span><span>(0.5)²</span></span> = 1 , x ≥ 0, y ≥ 0</div>
+        <div class="chips">
+          <div class="cp rv" data-at="3.5">Radio<b>a = 1.0 m</b></div>
+          <div class="cp rv" data-at="5">Profundidad<b>b = 0.5 m</b></div>
+          <div class="cp o rv" data-at="6.5">Espesor<b>8 mm</b></div>
+          <div class="cp g rv" data-at="8">Densidad<b>8000 kg/m³</b></div>
+        </div>
+      </div>
+      <div class="col">
+        <svg viewBox="0 0 400 290" class="rv fig" data-at="1" role="img" aria-label="Cuarto de elipse que gira alrededor del eje y">
+          <path d="M60 120 A280 140 0 0 1 340 260 L60 260 Z" fill="rgba(23,128,90,.10)"/>
+          <line x1="60" y1="270" x2="60" y2="40" stroke="#666a70" stroke-width="1.6" stroke-dasharray="6 5"/>
+          <line x1="40" y1="260" x2="380" y2="260" stroke="#8a8f96" stroke-width="1.4"/>
+          <path d="M60 120 A280 140 0 0 1 340 260" fill="none" stroke="#e8590c" stroke-width="4" stroke-linecap="round"/>
+                    <text x="70" y="36" font-size="13" fill="#666a70" font-family="DM Sans,sans-serif">eje del reactor (y)</text>
+          <text x="190" y="284" font-size="14" fill="#141414" font-family="DM Mono,monospace">a = 1 m</text>
+          <text x="2" y="195" font-size="14" fill="#141414" font-family="DM Mono,monospace">b=0.5</text>
+          <text x="204" y="150" font-size="13" fill="#e8590c" font-family="DM Sans,sans-serif" font-weight="700">curva a girar</text>
+          <text x="360" y="252" font-size="13" fill="#666a70" font-family="DM Sans,sans-serif">x</text>
+        </svg>
+        <ul class="qs">
+          <li class="rv" data-at="12"><i>a)</i> Plantea la integral del área de la tapa.</li>
+          <li class="rv" data-at="15.5"><i>b)</i> Calcula el área exacta.</li>
+          <li class="rv" data-at="19"><i>c)</i> Compárala con una tapa plana y una semiesférica.</li>
+          <li class="rv" data-at="22.5"><i>d)</i> ¿Cuántos kg de acero llevan las dos tapas?</li>
+          <li class="rv" data-at="26"><i>e)</i> Comprueba la fórmula en los casos extremos.</li>
+        </ul>
+      </div>
+    </div></section>
+
+    <!-- 3 NACE LA TAPA -->
+    <section class="slide"><div class="grid">
+      <div class="cv"><canvas id="cv1" aria-label="Tapa elíptica generada al girar una elipse"></canvas></div>
+      <div class="col">
+        <div class="kicker">Cómo nace la tapa</div>
+        <div class="caption" id="cap3"></div>
+        <div class="ctrl" id="c3phi"><span>Ángulo girado: <b id="v3phi"></b></span><input type="range" id="s3phi" min="0" max="360" step="1" value="0"></div>
+        <div class="ctrl" id="c3b"><span>Profundidad de la tapa b: <b id="v3b"></b> (a = 1 m)</span><input type="range" id="s3b" min="0.02" max="1" step="0.01" value="0.5"></div>
+        <div class="btns"><span class="pb" id="p3a">Casi plana</span><span class="pb" id="p3b">Elíptica 2:1</span><span class="pb" id="p3c">Semiesfera</span></div>
+        <div class="live2" id="live3"></div>
+        <div class="bars">
+          <div class="bar"><span>Plana</span><div class="tr"><div class="fl" id="f30" style="background:var(--grey)"></div></div><span class="v" id="v30"></span></div>
+          <div class="bar"><span><b>Tu tapa</b></span><div class="tr"><div class="fl" id="f31" style="background:var(--orange)"></div></div><span class="v" id="v31"></span></div>
+          <div class="bar"><span>Semiesfera</span><div class="tr"><div class="fl" id="f32" style="background:var(--accent)"></div></div><span class="v" id="v32"></span></div>
+        </div>
+      </div>
+    </div></section>
+
+    <!-- 4 ANILLOS -->
+    <section class="slide"><div class="grid">
+      <div class="cv"><canvas id="cv2" aria-label="Tapa aproximada con anillos"></canvas></div>
+      <div class="col">
+        <div class="kicker">La integral es una suma de anillos</div>
+        <div class="caption" id="cap4"></div>
+        <div class="ctrl act" id="c4n"><span>Número de anillos n: <b id="v4n"></b></span><input type="range" id="s4n" min="0" max="12" step="1" value="4"></div>
+        <div class="ctrl" id="c4s"><span>Anillo elegido: <b id="v4s"></b></span><input type="range" id="s4s" min="0" max="5" step="1" value="2"></div>
+        <svg id="strip" viewBox="0 0 600 130" role="img" aria-label="Anillo desenrollado"></svg>
+        <div class="chips">
+          <div class="cp">Suma de anillos<b id="r4sum"></b></div>
+          <div class="cp o">Valor exacto<b id="r4ex"></b></div>
+          <div class="cp g">Error<b id="r4err"></b></div>
+        </div>
+        <div class="formula rv" data-at="22.8">S = lím Σ 2π·x<sub>i</sub>·Δs<sub>i</sub> = 2π ∫ x ds</div>
+      </div>
+    </div></section>
+
+    <!-- 5 SOLUCIÓN -->
+    <section class="slide">
+      <div class="kicker" style="max-width:1100px;margin:0 auto 8px">La solución, paso a paso</div>
+      <div class="steps" id="steps5">
+        <div class="st" data-at="1"><span class="n">1</span><div><h3>Despejar x = g(y)</h3><div class="f">g(y) = <span class="fr"><span>a</span><span>b</span></span>√(b² − y²) , 0 ≤ y ≤ b</div></div></div>
+        <div class="st" data-at="5"><span class="n">2</span><div><h3>Derivar</h3><div class="f">g′(y) = − <span class="fr"><span>a</span><span>b</span></span> · <span class="fr"><span>y</span><span>√(b² − y²)</span></span></div></div></div>
+        <div class="st" data-at="9"><span class="n">3</span><div><h3>Plantear la integral (a)</h3><div class="f">S = 2π ∫<sub>0</sub><sup>b</sup> g(y) √(1 + [g′(y)]²) dy</div></div></div>
+        <div class="st" data-at="13"><span class="n">4</span><div><h3>El truco de la raíz</h3><div class="f">g√(1 + g′²) = a√(1 + k²y²) , k = <span class="fr"><span>c</span><span>b²</span></span> , c = √(a² − b²)</div></div></div>
+        <div class="st" data-at="17"><span class="n">5</span><div><h3>Sustitución u = tanθ (por partes)</h3><div class="f">∫√(1 + u²) du = <span class="fr"><span>u</span><span>2</span></span>√(1 + u²) + <span class="fr"><span>1</span><span>2</span></span> ln(u + √(1 + u²))</div></div></div>
+        <div class="st" data-at="21"><span class="n">6</span><div><h3>Resultado general (b)</h3><div class="f">S = πa² + <span class="fr"><span>π a b²</span><span>c</span></span> ln<span style="font-size:1.2em">(</span><span class="fr"><span>a + c</span><span>b</span></span><span style="font-size:1.2em">)</span></div></div></div>
+        <div class="st fin" data-at="25"><span class="n">7</span><div><h3>Con los números del problema</h3><div class="f">S = π + <span class="fr"><span>π</span><span>2√3</span></span> ln(2 + √3) ≈ 4.336 m²</div></div></div>
+      </div>
+    </section>
+
+    <!-- 6 CALCULADORA -->
+    <section class="slide"><div class="grid">
+      <div class="col">
+        <div class="kicker">Calculadora de acero</div>
+        <h2>Cambia el reactor y mira cuánto acero llevan sus dos tapas</h2>
+        <div class="two">
+          <div class="ctrl" id="c6D"><span>Diámetro D (m)</span><div class="inp" id="i6D"></div></div>
+          <div class="ctrl" id="c6h"><span>Profundidad h (m)</span><div class="inp" id="i6h"></div></div>
+          <div class="ctrl"><span>Espesor (mm)</span><div class="inp">8</div></div>
+          <div class="ctrl"><span>Densidad (kg/m³)</span><div class="inp">8000</div></div>
+        </div>
+        <div class="tip rv" data-at="24"><b>Ojo:</b> una semiesfera aguanta la misma presión con la mitad de espesor. Comparar "a igual espesor" es una simplificación.</div>
+      </div>
+      <div class="col">
+        <table><thead><tr><th>Tipo de tapa</th><th style="text-align:right">Área de 1 tapa</th><th style="text-align:right">Acero, 2 tapas</th></tr></thead>
+        <tbody id="t6"></tbody></table>
+        <div class="big" id="b6"></div>
+        <div style="color:var(--muted);font-size:.85em" id="n6"></div>
+      </div>
+    </div></section>
+
+    <!-- 7 CONCLUSIONES -->
+    <section class="slide"><div class="grid">
+      <div class="col">
+        <div class="kicker rv" data-at="0">Comprobamos la fórmula</div>
+        <h2 class="rv" data-at="0">Los dos casos extremos</h2>
+        <div class="two">
+          <div class="card rv" data-at="2"><span style="color:var(--muted);font-size:.8em">b = a (la elipse es un círculo)</span><b>Semiesfera</b><span class="mono" style="font-family:'DM Mono',monospace">S → 2πa² = 6.283 m²</span></div>
+          <div class="card rv" data-at="6"><span style="color:var(--muted);font-size:.8em">b → 0 (tapa aplastada)</span><b>Disco plano</b><span style="font-family:'DM Mono',monospace">S → πa² = 3.142 m²</span></div>
+        </div>
+        <div class="tip rv" data-at="10">Que la fórmula dé las dos formas conocidas es la mejor prueba de que no hay errores.</div>
+        <div class="formula rv" data-at="12" style="color:var(--orange);white-space:normal">Tapa 2:1: S ≈ 4.336 m² · 31 % menos que una semiesfera</div>
+      </div>
+      <div class="col">
+        <div class="kicker rv" data-at="14">Lo que aprendimos</div>
+        <ul class="qs" style="gap:14px">
+          <li class="rv" data-at="15"><i>1</i> Área de revolución: <b>S = 2π ∫ (radio) ds</b></li>
+          <li class="rv" data-at="18"><i>2</i> Si giramos alrededor del eje Y, escribimos <b>x = g(y)</b></li>
+          <li class="rv" data-at="21"><i>3</i> Una raíz √(1 + u²) se resuelve con <b>u = tanθ</b></li>
+          <li class="rv" data-at="24"><i>4</i> Siempre se <b>verifica con casos extremos</b></li>
+          <li class="rv" data-at="27"><i>5</i> Una integral, bien usada, decide cuánto acero comprar</li>
+        </ul>
+      </div>
+    </div></section>
+
+    <!-- 8 VIDEO -->
+    <section class="slide"><div class="vid">
+      <div class="kicker">Así se ve la integral</div>
+      <video id="vid" src="superficie_revolucion.mp4" muted playsinline preload="none" controls></video>
+    </div></section>
+
+    <div id="wait"><div class="spin" id="spin"></div><b id="wtitle" style="font-family:'Fraunces',Georgia,serif;font-size:1.5em">Conectando…</b><span id="wtext" style="color:var(--muted);max-width:34ch">Esperando al expositor.</span><button id="wlocal" type="button" style="display:none">Ver por mi cuenta</button></div>
+  </main>
+
+  <footer class="bottom">
+    <div id="pbar"><div id="pfill"></div></div>
+    <div id="ctl"><button id="bprev" type="button">⏮</button><button id="bplay" type="button" class="go">▶ Comenzar</button><button id="bnext" type="button">⏭</button><button id="bfs" type="button">⛶</button></div>
+  </footer>
+</div>
+
+<script>
+(function(){
+'use strict';
+var CFG={topic:'tapa-sfs-0e663b041093',relay:'https://ntfy.sh',dur:30,url:'https://maestrosuprem0.github.io/Tarea-calculo/presentacion.html'};
+var Q=new URLSearchParams(location.search);
+var LOCALHOST=(location.hostname==='localhost'||location.hostname==='127.0.0.1');
+if(LOCALHOST&&Q.get('relay'))CFG.relay=Q.get('relay');
+var mode=Q.has('presentar')?'presenter':'viewer';
+var PI=Math.PI;
+function $(id){return document.getElementById(id)}
+function fx(x,d){return x.toFixed(d===undefined?3:d)}
+function ease(x){x=Math.max(0,Math.min(1,x));return x*x*(3-2*x)}
+function kf(t,k){if(t<=k[0][0])return k[0][1];for(var i=1;i<k.length;i++){if(t<=k[i][0]){var a=k[i-1],b=k[i];return a[1]+(b[1]-a[1])*ease((t-a[0])/(b[0]-a[0]))}}return k[k.length-1][1]}
+function stp(t,k){var v=k[0][1];for(var i=0;i<k.length;i++){if(t>=k[i][0])v=k[i][1]}return v}
+
+/* ---------- matemática ---------- */
+function exactArea(a,b){if(b<=1e-9)return PI*a*a;var c=Math.sqrt(Math.max(a*a-b*b,0));if(c<1e-7)return 2*PI*a*a;return PI*a*a+PI*a*b*b/c*Math.log((a+c)/b)}
+function ringPts(a,b,n){var p=[];for(var i=0;i<=n;i++){var t=PI/2*i/n;p.push([a*Math.cos(t),b*Math.sin(t)])}return p}
+function ringsArea(a,b,n){var p=ringPts(a,b,n),s=0;for(var i=0;i<n;i++)s+=PI*(p[i][0]+p[i+1][0])*Math.hypot(p[i+1][0]-p[i][0],p[i+1][1]-p[i][1]);return s}
+
+/* ---------- 3D ---------- */
+var GREEN=[23,128,90],GREEN2=[118,190,155],ORANGE=[232,89,12],GREYC=[206,210,206],PITCH=0.42;
+var LV=(function(){var v=[-0.35,0.62,0.7],m=Math.hypot(v[0],v[1],v[2]);return[v[0]/m,v[1]/m,v[2]/m]})();
+function view(P,yaw){var c=Math.cos(yaw),s=Math.sin(yaw),x1=P[0]*c+P[2]*s,z1=-P[0]*s+P[2]*c,cp=Math.cos(PITCH),sp=Math.sin(PITCH);return[x1,P[1]*cp-z1*sp,P[1]*sp+z1*cp]}
+function shade(rgb,k,al){var m=0.42*k,f=0.78+0.22*k;return'rgba('+Math.round((rgb[0]+(255-rgb[0])*m)*f)+','+Math.round((rgb[1]+(255-rgb[1])*m)*f)+','+Math.round((rgb[2]+(255-rgb[2])*m)*f)+','+al+')'}
+function PP(t,ph,b){return[Math.cos(t)*Math.cos(ph),b*Math.sin(t),Math.cos(t)*Math.sin(ph)]}
+function draw3D(canvas,o){
+  var r=canvas.getBoundingClientRect();if(!r.width)return;
+  var d=Math.min(window.devicePixelRatio||1,2),W=r.width,H=r.height;
+  if(canvas.width!==Math.round(W*d)||canvas.height!==Math.round(H*d)){canvas.width=Math.round(W*d);canvas.height=Math.round(H*d)}
+  var ctx=canvas.getContext('2d');ctx.setTransform(d,0,0,d,0,0);ctx.clearRect(0,0,W,H);
+  var b=o.b,yaw=o.yaw,sc=Math.min(W,H)*0.36,cx=W/2,cy=H/2+((b-0.45)/2)*sc*Math.cos(PITCH);
+  function scr(v){return[cx+v[0]*sc,cy-v[1]*sc]}
+  var polys=[];
+  function add(world,rgb,al,stroke){
+    var v=world.map(function(p){return view(p,yaw)});
+    var ax=v[1][0]-v[0][0],ay=v[1][1]-v[0][1],az=v[1][2]-v[0][2],bx=v[3][0]-v[0][0],by=v[3][1]-v[0][1],bz=v[3][2]-v[0][2];
+    var nx=ay*bz-az*by,ny=az*bx-ax*bz,nz=ax*by-ay*bx,nm=Math.hypot(nx,ny,nz)||1;
+    var k=Math.abs((nx*LV[0]+ny*LV[1]+nz*LV[2])/nm);
+    polys.push({pts:v.map(scr),z:(v[0][2]+v[1][2]+v[2][2]+v[3][2])/4,fill:shade(rgb,k,al),stroke:stroke});
+  }
+  var NC=36,y0=-0.78;
+  for(var j=0;j<NC;j++){var p0=2*PI*j/NC,p1=2*PI*(j+1)/NC;add([[Math.cos(p0),y0,Math.sin(p0)],[Math.cos(p1),y0,Math.sin(p1)],[Math.cos(p1),0,Math.sin(p1)],[Math.cos(p0),0,Math.sin(p0)]],GREYC,0.55,'rgba(120,125,120,.18)')}
+  if(o.mode==='sweep'){
+    var phR=o.phi*PI/180,nt=14,np=Math.max(1,Math.ceil(phR/(PI/24)));
+    if(phR>0.001)for(var i=0;i<nt;i++){var t0=PI/2*i/nt,t1=PI/2*(i+1)/nt;for(var j2=0;j2<np;j2++){var a0=phR*j2/np,a1=phR*(j2+1)/np;add([PP(t0,a0,b),PP(t0,a1,b),PP(t1,a1,b),PP(t1,a0,b)],GREEN,0.9,'rgba(255,255,255,.45)')}}
+  }else{
+    var pts=ringPts(1,b,o.n),NP=o.n>30?32:48,st=o.n<=50?'rgba(255,255,255,.25)':'rgba(255,255,255,0)';
+    for(var i2=0;i2<o.n;i2++){var rgb=(i2===o.sel)?ORANGE:(i2%2?GREEN2:GREEN),A=pts[i2],B=pts[i2+1];
+      for(var j3=0;j3<NP;j3++){var q0=2*PI*j3/NP,q1=2*PI*(j3+1)/NP;add([[A[0]*Math.cos(q0),A[1],A[0]*Math.sin(q0)],[A[0]*Math.cos(q1),A[1],A[0]*Math.sin(q1)],[B[0]*Math.cos(q1),B[1],B[0]*Math.sin(q1)],[B[0]*Math.cos(q0),B[1],B[0]*Math.sin(q0)]],rgb,0.93,st)}}
+  }
+  polys.sort(function(p,q){return p.z-q.z});
+  ctx.lineWidth=0.7;
+  polys.forEach(function(p){ctx.beginPath();ctx.moveTo(p.pts[0][0],p.pts[0][1]);for(var i=1;i<4;i++)ctx.lineTo(p.pts[i][0],p.pts[i][1]);ctx.closePath();ctx.fillStyle=p.fill;ctx.fill();ctx.strokeStyle=p.stroke;ctx.stroke()});
+  var e0=scr(view([0,-0.95,0],yaw)),e1=scr(view([0,b+0.38,0],yaw));
+  ctx.save();ctx.setLineDash([5,5]);ctx.strokeStyle='#666a70';ctx.lineWidth=1.3;ctx.beginPath();ctx.moveTo(e0[0],e0[1]);ctx.lineTo(e1[0],e1[1]);ctx.stroke();ctx.restore();
+  ctx.fillStyle='#666a70';ctx.font='12px "DM Mono", monospace';ctx.fillText('eje del reactor',e1[0]+6,e1[1]+4);
+  if(o.mode==='sweep'){
+    var ph=o.phi*PI/180;ctx.strokeStyle='#e8590c';ctx.lineWidth=3.2;ctx.lineCap='round';ctx.beginPath();
+    for(var k2=0;k2<=40;k2++){var s2=scr(view(PP(PI/2*k2/40,ph,b),yaw));if(k2)ctx.lineTo(s2[0],s2[1]);else ctx.moveTo(s2[0],s2[1])}
+    ctx.stroke();
+    var lab=scr(view(PP(0.9,ph,b),yaw));ctx.font='600 13px "DM Sans", sans-serif';
+    var lx=Math.min(lab[0]+10,W-118),ly=Math.max(lab[1]-12,16);
+    ctx.lineWidth=4;ctx.strokeStyle='rgba(255,255,255,.92)';ctx.lineJoin='round';ctx.strokeText('curva generatriz',lx,ly);ctx.fillStyle='#e8590c';ctx.fillText('curva generatriz',lx,ly);
+  }
+}
+var lastSig={};
+function redraw(id,o){var sig=JSON.stringify(o)+$(id).clientWidth;if(lastSig[id]===sig)return;lastSig[id]=sig;draw3D($(id),o)}
+
+/* ---------- diapositivas ---------- */
+var NS=[1,2,3,4,5,6,8,10,15,20,30,50,100];
+function r3(t){
+  var phi=kf(t,[[0,0],[0.6,0],[6.6,360]]);
+  var b=kf(t,[[0,0.5],[8,0.5],[11.5,0.02],[12.5,0.02],[16,1],[17,1],[20.5,0.5]]);
+  var yaw=-0.75+0.35*Math.sin(t/4.8);
+  redraw('cv1',{mode:'sweep',b:Math.round(b*200)/200,phi:Math.round(phi),yaw:Math.round(yaw*100)/100});
+  $('s3phi').value=Math.round(phi);$('s3b').value=b;
+  $('v3phi').textContent=Math.round(phi)+'°';$('v3b').textContent=fx(b,2)+' m';
+  $('c3phi').classList.toggle('act',t>0.6&&t<6.6);$('c3b').classList.toggle('act',t>8&&t<21);
+  $('p3a').classList.toggle('press',t>11&&t<13.5);$('p3c').classList.toggle('press',t>16&&t<18.5);$('p3b').classList.toggle('press',t>20.3&&t<23.5);
+  var S=exactArea(1,b),c=Math.sqrt(Math.max(1-b*b,0)),hemi=2*PI;
+  $('v30').textContent=fx(PI)+' m²';$('v31').textContent=fx(S)+' m²';$('v32').textContent=fx(hemi)+' m²';
+  $('f30').style.width=(PI/hemi*100)+'%';$('f31').style.width=(S/hemi*100)+'%';$('f32').style.width='100%';
+  $('live3').innerHTML=c<1e-3?'b = a → c = 0 → semiesfera: S = 2πa² = '+fx(hemi,4)+' m²':'c = '+fx(c,4)+' → S = π + (π·'+fx(b*b,3)+'/'+fx(c,4)+')·ln('+fx((1+c)/b,3)+') = <b style="color:#e8590c">'+fx(S,4)+' m²</b>';
+  var cap=stp(t,[[0,'La curva naranja gira alrededor del eje y va pintando la tapa.'],[8,'Ahora cambiamos la profundidad b: de casi plana a semiesfera.'],[21,'Tapa 2:1: usa 31 % menos superficie que una semiesfera.']]);
+  if($('cap3').textContent!==cap)$('cap3').textContent=cap;
+}
+function strip(n,sel,b){
+  var p=ringPts(1,b,n),A=p[sel],B=p[sel+1],xm=(A[0]+B[0])/2,ds=Math.hypot(B[0]-A[0],B[1]-A[1]),len=2*PI*xm,area=len*ds;
+  var k=540/(2*PI),w=Math.max(2,len*k),h=Math.max(3,Math.min(46,ds*k)),x0=30,y0=34;
+  $('strip').setAttribute('viewBox','0 0 600 '+(y0+h+50));
+  $('strip').innerHTML='<rect x="'+x0+'" y="'+y0+'" width="'+(2*PI*k)+'" height="'+h+'" fill="none" stroke="#e8e8e6" stroke-dasharray="4 4"/><rect x="'+x0+'" y="'+y0+'" width="'+w+'" height="'+h+'" fill="rgba(232,89,12,.18)" stroke="#e8590c" stroke-width="1.5"/>'+
+  '<text x="'+x0+'" y="'+(y0-10)+'" font-size="14" fill="#141414" font-family="DM Sans, sans-serif">Anillo '+(sel+1)+' desenrollado: largo 2π·x = '+fx(len,3)+' m</text>'+
+  '<text x="'+x0+'" y="'+(y0+h+22)+'" font-size="14" fill="#666a70" font-family="DM Sans, sans-serif">ancho ds = '+fx(ds,3)+' m → área ≈ '+fx(area,4)+' m²</text>';
+}
+function r4(t){
+  var n=stp(t,[[0,5],[6,8],[8.8,10],[11.6,15],[14.4,20],[17.2,30],[20,50],[22.8,100]]);
+  var sel=t<6?Math.floor(t/1.2)%5:Math.floor((n-1)/2);
+  var b=0.5;
+  redraw('cv2',{mode:'rings',b:b,yaw:-0.75,n:n,sel:sel});
+  var ni=NS.indexOf(n);$('s4n').value=ni;$('s4s').max=n-1;$('s4s').value=sel;
+  $('v4n').textContent=n;$('v4s').textContent=(sel+1)+' de '+n;
+  $('c4s').classList.toggle('act',t<6);$('c4n').classList.toggle('act',t>=6&&t<23);
+  var key=n+'/'+sel;if(r4.k!==key){r4.k=key;strip(n,sel,b);var ex=exactArea(1,b),sum=ringsArea(1,b,n);$('r4sum').textContent=fx(sum,4)+' m²';$('r4ex').textContent=fx(ex,4)+' m²';$('r4err').textContent=fx(Math.abs(ex-sum)/ex*100,3)+' %'}
+  var cap=stp(t,[[0,'Cada anillo, desenrollado, es casi una tirita de largo 2π·x y ancho ds.'],[6,'Más anillos: la suma se acerca al valor exacto.'],[22.8,'Con infinitos anillos, la suma es la integral.']]);
+  if($('cap4').textContent!==cap)$('cap4').textContent=cap;
+}
+function r5(t){
+  var els=document.querySelectorAll('#steps5 .st'),cur=-1;
+  for(var i=0;i<els.length;i++){var on=t>=+els[i].dataset.at;if(on)cur=i}
+  for(var j=0;j<els.length;j++){els[j].classList.toggle('cur',j===cur);}
+  if(cur!==r5.c){r5.c=cur;if(cur>=0&&els[cur].scrollIntoView)els[cur].scrollIntoView({block:'nearest',behavior:'smooth'})}
+}
+function r6(t){
+  var D=kf(t,[[0,2],[17,2],[19,3],[24,3],[26,2]]);
+  var h=kf(t,[[0,0.5],[6,0.5],[9,0.25],[11,0.25],[15,1],[17,1],[19,0.75],[24,0.75],[26,0.5]]);
+  var a=D/2;h=Math.min(h,a);
+  $('i6D').textContent=fx(D,2);$('i6h').textContent=fx(h,2);
+  $('c6h').classList.toggle('act',t>6&&t<17);$('c6D').classList.toggle('act',t>17&&t<26);
+  var Se=exactArea(a,h),Sh=2*PI*a*a,Sf=PI*a*a,m=function(S){return 2*S*0.008*8000};
+  $('t6').innerHTML='<tr><td>Plana</td><td class="n">'+fx(Sf)+' m²</td><td class="n">'+fx(m(Sf),1)+' kg</td></tr>'+
+   '<tr><td><b style="color:#e8590c">Elíptica (h = '+fx(h,2)+')</b></td><td class="n"><b>'+fx(Se)+' m²</b></td><td class="n"><b>'+fx(m(Se),1)+' kg</b></td></tr>'+
+   '<tr><td>Semiesférica</td><td class="n">'+fx(Sh)+' m²</td><td class="n">'+fx(m(Sh),1)+' kg</td></tr>';
+  $('b6').textContent=fx(m(Sh)-m(Se),1)+' kg';
+  $('n6').textContent='de acero ahorrado frente a dos tapas semiesféricas ('+fx((1-Se/Sh)*100,1)+' % menos).'+(t>=26?' Es el resultado del problema: 555.0 kg y 249.2 kg.':'');
+}
+var vid=$('vid');
+var SL=[
+ {dur:CFG.dur},{dur:CFG.dur},{dur:CFG.dur,render:r3},{dur:CFG.dur,render:r4},{dur:CFG.dur,render:r5},{dur:CFG.dur,render:r6},{dur:CFG.dur},
+ {dur:1e9,video:true}
+];
+var slides=[].slice.call(document.querySelectorAll('#stage .slide'));
+slides.forEach(function(s){[].forEach.call(s.querySelectorAll('[data-at]'),function(e){e.classList.add('rv')})});
+
+/* ---------- reloj / estado ---------- */
+var S={i:0,base:0,anchor:performance.now(),paused:true,started:false};
+function elapsed(){return S.paused?S.base:S.base+(performance.now()-S.anchor)/1000}
+function enter(i){
+  slides.forEach(function(s,k){s.classList.toggle('on',k===i)});
+  lastSig={};r4.k=null;r5.c=-2;
+  $('counter').style.display='';$('counter').textContent=(i+1)+' / '+SL.length;
+  if(i===SL.length-2&&vid){try{vid.preload='auto';vid.load()}catch(e){}}
+  if(!SL[i].video&&vid){try{vid.pause()}catch(e){}}
+  slides[i].scrollTop=0;
+}
+function setState(i,e,paused){var ch=i!==S.i||enter.first!==true;S.i=i;S.base=e;S.anchor=performance.now();S.paused=paused;if(ch){enter.first=true;enter(i)}syncVideo()}
+function syncVideo(){
+  if(!SL[S.i].video||!vid)return;
+  var t=elapsed();
+  try{
+    if(Math.abs(vid.currentTime-t)>1.2&&vid.readyState>0)vid.currentTime=Math.min(t,vid.duration||t);
+    if(S.paused||(mode==='viewer'&&false))vid.pause();else if(vid.paused){var p=vid.play();if(p&&p.catch)p.catch(function(){})}
+  }catch(e){}
+}
+function reveal(t){var sec=slides[S.i];[].forEach.call(sec.querySelectorAll('[data-at]'),function(e){e.classList.toggle('in',t>=+e.dataset.at)})}
+function frame(){
+  var t=elapsed(),s=SL[S.i];
+  if(mode!=='viewer'&&S.started&&!S.paused&&t>=s.dur&&S.i<SL.length-1){go(S.i+1,0,false);t=0;s=SL[S.i]}
+  if(t>s.dur)t=s.dur;
+  reveal(t);if(s.render)s.render(t);
+  if(s.video&&S.started&&Math.abs(vid.currentTime-t)>2.5&&vid.readyState>0&&!vid.seeking){try{vid.currentTime=t}catch(e){}}
+  $('pfill').style.width=(s.video?(vid&&vid.duration?vid.currentTime/vid.duration*100:0):Math.min(100,t/s.dur*100))+'%';
+  requestAnimationFrame(frame);
+}
+
+/* ---------- transmisión (ntfy) ---------- */
+var live=false,lastLive=null,got=false,es=null,connected=false,pubOk=true,hb=null,follow=true;
+function pubState(){
+  if(mode!=='presenter'||!S.started)return;
+  var body=JSON.stringify({v:1,i:S.i,el:Math.round(elapsed()*100)/100,paused:S.paused});
+  fetch(CFG.relay+'/'+CFG.topic,{method:'POST',body:body}).then(function(r){pubOk=r.ok;ui()}).catch(function(){pubOk=false;ui()});
+}
+function go(i,e,paused){setState(i,e,paused);pubState()}
+function onRemote(ev){
+  var d;try{d=JSON.parse(ev.data)}catch(e){return}
+  if(d.event!=='message')return;
+  var st;try{st=JSON.parse(d.message)}catch(e){return}
+  if(!st||st.v!==1||typeof st.i!=='number')return;
+  var el=st.el;
+  if(!st.paused){var age=Math.max(0,Math.min(40,Date.now()/1000-d.time));el+=age}
+  lastLive={i:Math.max(0,Math.min(SL.length-1,st.i)),el:el,paused:!!st.paused};
+  got=true;
+  if(mode==='viewer')applyLive();
+  ui();
+}
+function applyLive(){
+  if(!lastLive)return;
+  S.started=true;
+  if(lastLive.i!==S.i||Math.abs(elapsed()-lastLive.el)>0.6||lastLive.paused!==S.paused)setState(lastLive.i,lastLive.el,lastLive.paused);
+  lastLive.applied=true;
+}
+function connect(){
+  if(mode==='presenter'||es||!window.EventSource)return;
+  try{
+    es=new EventSource(CFG.relay+'/'+CFG.topic+'/sse?since=3m');
+    es.addEventListener('open',function(){connected=true;ui()});
+    es.addEventListener('message',onRemote);
+    es.onerror=function(){connected=false;ui()};
+  }catch(e){connected=false}
+}
+
+/* ---------- interfaz ---------- */
+var waitTimer=null,t0=performance.now();
+function ui(){
+  document.body.setAttribute('data-mode',mode);
+  var st=$('status'),ctl=$('ctl'),w=$('wait');
+  if(mode==='presenter'){
+    st.className='chip'+(S.started?' live':'');
+    st.innerHTML='<span class="dot"></span>'+(!S.started?'Listo · pulsa Comenzar':(pubOk?'EN VIVO · transmitiendo a los celulares':'Sin conexión: los celulares no te siguen'));
+    $('bplay').textContent=!S.started?'▶ Comenzar':(S.paused?'▶ Reanudar':'⏸ Pausar');
+    $('bplay').className=(!S.started||S.paused)?'go':'';
+    w.classList.remove('on');
+  }else if(mode==='viewer'){
+    ctl.classList.remove('show');
+    if(!got){
+      st.className='chip';st.innerHTML='<span class="dot"></span>'+(connected?'Conectado':'Conectando…');
+      w.classList.add('on');
+      $('wtitle').textContent=connected?'Esperando al expositor':'Conectando…';
+      $('wtext').textContent=connected?'La exposición empezará en cuanto el expositor pulse Comenzar. No cierres esta pantalla.':'Buscando la transmisión en vivo.';
+      $('spin').style.display='';
+      var late=(performance.now()-t0)>7000;$('wlocal').style.display=late?'':'none';
+    }else{
+      w.classList.remove('on');
+      st.className='chip live';st.innerHTML='<span class="dot"></span>EN VIVO · sigues al expositor (toca para ir por tu cuenta)';
+    }
+  }else{ // local
+    w.classList.remove('on');ctl.classList.add('show');
+    st.className='chip';st.innerHTML='Por mi cuenta'+(got?' · toca para volver al en vivo':'');
+    $('bplay').textContent=S.paused?'▶ Reanudar':'⏸ Pausar';$('bplay').className=S.paused?'go':'';
+  }
+}
+function goLocal(){mode='local';S.started=true;setState(S.i,elapsed(),false);ui()}
+function goLive(){if(!got)return;mode='viewer';applyLive();ui()}
+$('status').addEventListener('click',function(){if(mode==='viewer'&&got)goLocal();else if(mode==='local')goLive()});
+$('wlocal').addEventListener('click',function(){S.started=true;mode='local';setState(0,0,false);ui()});
+function act(kind){
+  if(mode==='viewer')return;
+  if(kind==='play'){
+    if(mode==='presenter'&&!S.started){S.started=true;go(S.i,S.base,false);ui();return}
+    if(S.paused)go(S.i,S.base,false);else go(S.i,elapsed(),true);ui();
+  }else if(kind==='next'&&S.i<SL.length-1){go(S.i+1,0,S.paused);ui()}
+  else if(kind==='prev'&&S.i>0){go(S.i-1,0,S.paused);ui()}
+}
+$('bplay').addEventListener('click',function(){act('play')});
+$('bnext').addEventListener('click',function(){act('next')});
+$('bprev').addEventListener('click',function(){act('prev')});
+$('bfs').addEventListener('click',function(){var e=document.documentElement;try{if(document.fullscreenElement)document.exitFullscreen();else e.requestFullscreen()}catch(x){}});
+document.addEventListener('keydown',function(ev){
+  if(ev.key==='ArrowRight'||ev.key==='PageDown')act('next');
+  else if(ev.key==='ArrowLeft'||ev.key==='PageUp')act('prev');
+  else if(ev.key===' '||ev.key==='Enter'){ev.preventDefault();act('play')}
+  else if(ev.key==='f'||ev.key==='F')$('bfs').click();
+});
+window.addEventListener('resize',function(){lastSig={}});
+setInterval(function(){if(mode==='viewer'&&!got)ui()},1000);
+setInterval(pubState,20000);
+
+/* ---------- arranque ---------- */
+setState(0,0,true);
+if(mode==='viewer')connect();
+ui();
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(function(){lastSig={}});
+requestAnimationFrame(frame);
+if(LOCALHOST)window.__app={setState:setState,SL:SL,get S(){return S},get mode(){return mode},got:function(){return got},act:act,local:function(){S.started=true;mode='local';ui()}};
+})();
+</script>
+</body>
+</html>
